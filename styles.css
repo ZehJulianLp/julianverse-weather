@@ -1,0 +1,254 @@
+:root {
+    color-scheme: light;
+    --bg: #f5f5f2;
+    --panel: #ffffff;
+    --text: #171717;
+    --muted: #666666;
+    --line: #deded8;
+    --accent: #245f73;
+    --accent-dark: #164555;
+    --danger: #8f2f2f;
+    --shadow: 0 18px 45px rgba(23, 23, 23, 0.08);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    line-height: 1.5;
+}
+
+main {
+    width: min(960px, calc(100% - 32px));
+    margin: 0 auto;
+    padding: 48px 0;
+}
+
+.hero {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 28px;
+}
+
+.eyebrow {
+    margin: 0;
+    color: var(--accent);
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+h1 {
+    margin: 0;
+    font-size: clamp(2.2rem, 8vw, 5rem);
+    line-height: 0.95;
+    letter-spacing: -0.07em;
+}
+
+.hero p {
+    max-width: 580px;
+    margin: 0;
+    color: var(--muted);
+    font-size: 1.05rem;
+}
+
+.panel {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    box-shadow: var(--shadow);
+}
+
+.search {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 10px;
+    padding: 16px;
+    margin-bottom: 20px;
+}
+
+label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+input,
+button {
+    min-height: 48px;
+    border-radius: 999px;
+    font: inherit;
+}
+
+input {
+    width: 100%;
+    border: 1px solid var(--line);
+    padding: 0 18px;
+    background: #fbfbf8;
+    color: var(--text);
+    outline: none;
+}
+
+input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(36, 95, 115, 0.12);
+}
+
+button {
+    border: 0;
+    padding: 0 18px;
+    background: var(--accent);
+    color: #ffffff;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+button:hover {
+    background: var(--accent-dark);
+}
+
+button.secondary {
+    border: 1px solid var(--line);
+    background: #ffffff;
+    color: var(--text);
+}
+
+button.secondary:hover {
+    background: #f0f0ea;
+}
+
+button:disabled {
+    cursor: wait;
+    opacity: 0.68;
+}
+
+.status {
+    min-height: 28px;
+    margin: 0 0 16px;
+    color: var(--muted);
+}
+
+.status.error {
+    color: var(--danger);
+}
+
+.weather {
+    display: grid;
+    gap: 20px;
+}
+
+.current {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(220px, 0.7fr);
+    gap: 18px;
+    padding: 24px;
+}
+
+.place {
+    margin: 0 0 8px;
+    color: var(--muted);
+    font-size: 1rem;
+}
+
+.temperature {
+    margin: 0;
+    font-size: clamp(4rem, 15vw, 8rem);
+    font-weight: 800;
+    line-height: 0.9;
+    letter-spacing: -0.08em;
+}
+
+.summary {
+    margin: 14px 0 0;
+    font-size: 1.2rem;
+}
+
+.meta {
+    display: grid;
+    gap: 10px;
+    align-content: center;
+}
+
+.meta-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+}
+
+.meta-item:last-child {
+    border-bottom: 0;
+}
+
+.meta-item span {
+    color: var(--muted);
+}
+
+.meta-item strong {
+    text-align: right;
+}
+
+.forecast {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+}
+
+.day {
+    padding: 16px;
+}
+
+.day h2 {
+    margin: 0 0 10px;
+    font-size: 0.95rem;
+}
+
+.day p {
+    margin: 0;
+    color: var(--muted);
+}
+
+.day strong {
+    display: block;
+    margin: 12px 0 2px;
+    font-size: 1.3rem;
+}
+
+.hidden {
+    display: none;
+}
+
+@media (max-width: 760px) {
+    main {
+        width: min(100% - 20px, 960px);
+        padding: 28px 0;
+    }
+
+    .search,
+    .current {
+        grid-template-columns: 1fr;
+    }
+
+    .forecast {
+        grid-template-columns: 1fr;
+    }
+
+    button,
+    input {
+        width: 100%;
+    }
+}
