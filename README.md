@@ -2,6 +2,8 @@
 
 A small static weather app using Open-Meteo.
 
+Live app: <https://julianverse.de/weather/>
+
 ## Features
 
 - Search weather by city name.
@@ -33,9 +35,29 @@ Geolocation requires browser permission and may require a secure context outside
 
 ## URL Parameters
 
-- `place=Berlin` loads a city by search.
-- `lat=52.52&lon=13.41&name=Berlin` loads coordinates with a display name.
-- `lang=en|de`, `theme=light|dark`, `layout=expanded|compact`, and `units=metric|imperial` override settings.
-- `charts=temperature,rain,wind,uv` controls visible charts.
-- `save=1` saves the loaded place and `pin=1` makes it the default place.
-- `install=0` hides install prompts.
+The app state can be shared or preconfigured through query parameters:
+
+| Parameter | Values | Description |
+| --- | --- | --- |
+| `place` | City search text, for example `Berlin` | Searches and loads a place by name. |
+| `lat` / `lon` | Coordinates, for example `52.52` and `13.41` | Loads weather for exact coordinates. Use both parameters together. |
+| `name` | Display name | Optional label for coordinate URLs. |
+| `lang` | `en`, `de` | Sets the UI language. |
+| `theme` | `light`, `dark` | Sets the color theme. |
+| `layout` | `expanded`, `compact` | Sets the density of the weather layout. |
+| `units` | `metric`, `imperial` | Sets weather units. |
+| `charts` | Comma-separated list: `temperature`, `rain`, `wind`, `uv` | Controls which weather trend charts are visible. `rain` maps to precipitation. |
+| `save` | `1` | Saves the loaded place locally. |
+| `pin` | `1` | Pins the loaded place as the default place. |
+| `install` | `0` | Hides install prompts. |
+
+Examples:
+
+```text
+https://julianverse.de/weather/?place=Berlin
+https://julianverse.de/weather/?lat=52.52&lon=13.41&name=Berlin
+https://julianverse.de/weather/?place=Hannover&lang=de&theme=dark&units=metric
+https://julianverse.de/weather/?place=Berlin&charts=temperature,rain,wind,uv&save=1&pin=1
+```
+
+When used as an installed PWA, the app usually starts from the manifest `start_url` instead of the last visible URL. Last selected places, saved places, pinned places, settings, and cached weather are therefore persisted locally in browser storage.
