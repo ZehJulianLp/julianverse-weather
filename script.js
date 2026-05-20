@@ -300,6 +300,9 @@ const settingsKey = "julianverse-weather:settings";
 const savedLocationsKey = "julianverse-weather:saved-locations";
 const pinnedLocationKey = "julianverse-weather:pinned-location";
 const installDismissedKey = "julianverse-weather:install-dismissed";
+const persistentDatabaseName = "julianverse-weather";
+const persistentStoreName = "app-state";
+const persistentKeys = [weatherCacheKey, lastLocationKey, settingsKey, savedLocationsKey, pinnedLocationKey];
 const defaultLocations = {
     berlin: {
         name: "Berlin, Germany",
@@ -310,12 +313,19 @@ const defaultLocations = {
 };
 let currentSettings = readSettings();
 let savedLocations = readSavedLocations();
+let currentPinnedLocation = readPinnedLocation();
 let currentLocation = null;
 let currentWeatherData = null;
 let deferredInstallPrompt = null;
 let startupUrlLocation = null;
 let shouldSaveUrlLocation = false;
 let shouldPinUrlLocation = false;
+let persistentDatabasePromise = null;
+let startupUsedFallbackLocation = false;
+
+const wait = (milliseconds) => new Promise((resolve) => {
+    window.setTimeout(resolve, milliseconds);
+});
 
 const setLoading = (isLoading) => {
     searchForm.querySelectorAll("button, input").forEach((element) => {
@@ -356,7 +366,7 @@ const formatDate = (value, options) => {
 };
 
 const getWeatherLabel = (code) => weatherCodeLabels[currentSettings.language]?.[code] || weatherCodeLabels.en[code] || t("mixedWeather");
-const hasNumber = (value) => Number.isFinite(Number(value));
+const hasNumber = (value) => value !== null && value !== "" && Number.isFinite(Number(value));
 const convertTemperature = (value) => currentSettings.units === "imperial" ? value * 9 / 5 + 32 : value;
 const convertWind = (value) => currentSettings.units === "imperial" ? value / 1.609344 : value;
 const convertPressure = (value) => currentSettings.units === "imperial" ? value * 0.02953 : value;
@@ -445,7 +455,7 @@ function applyUrlOptions() {
     }
 
     if (options.install === "0") {
-        localStorage.setItem(installDismissedKey, "true");
+        writeJson(installDismissedKey, true);
     }
 
     if (hasNumber(options.latitude) && hasNumber(options.longitude)) {
@@ -503,9 +513,153 @@ function writeJson(key, value) {
     } catch {
         // LocalStorage can be unavailable in private browsing or strict settings.
     }
+
+    writePersistentJson(key, value).catch(() => {});
 }
 
-function readSettings() {
+function removeJson(key) {
+    try {
+        localStorage.removeItem(key);
+    } catch {
+        // LocalStorage can be unavailable in private browsing or strict settings.
+    }
+
+    deletePersistentJson(key).catch(() => {});
+}
+
+function openPersistentDatabase() {
+    if (!("indexedDB" in window)) {
+        return Promise.resolve(null);
+    }
+
+    if (!persistentDatabasePromise) {
+        persistentDatabasePromise = new Promise((resolve) => {
+            const request = indexedDB.open(persistentDatabaseName, 1);
+
+            request.onupgradeneeded = () => {
+                request.result.createObjectStore(persistentStoreName);
+            };
+
+            request.onsuccess = () => {
+                resolve(request.result);
+            };
+
+            request.onerror = () => {
+                resolve(null);
+            };
+
+            request.onblocked = () => {
+                resolve(null);
+            };
+        });
+    }
+
+    return persistentDatabasePromise;
+}
+
+async function openPersistentDatabaseWithTimeout() {
+    return Promise.race([
+        openPersistentDatabase().catch(() => null),
+        wait(300).then(() => null)
+    ]);
+}
+
+async function readPersistentJson(key, fallback) {
+    const localValue = readJson(key, null);
+
+    if (localValue) {
+        return localValue;
+    }
+
+    const database = await openPersistentDatabaseWithTimeout();
+
+    if (!database) {
+        return fallback;
+    }
+
+    return new Promise((resolve) => {
+        let transaction;
+
+        try {
+            transaction = database.transaction(persistentStoreName, "readonly");
+        } catch {
+            resolve(fallback);
+            return;
+        }
+
+        const request = transaction.objectStore(persistentStoreName).get(key);
+
+        request.onsuccess = () => {
+            resolve(request.result ?? fallback);
+        };
+
+        request.onerror = () => {
+            resolve(fallback);
+        };
+
+        transaction.onabort = () => {
+            resolve(fallback);
+        };
+    });
+}
+
+async function writePersistentJson(key, value) {
+    const database = await openPersistentDatabaseWithTimeout();
+
+    if (!database) {
+        return;
+    }
+
+    try {
+        const transaction = database.transaction(persistentStoreName, "readwrite");
+        transaction.objectStore(persistentStoreName).put(value, key);
+    } catch {
+        // LocalStorage still has the newest value when IndexedDB cannot write.
+    }
+}
+
+async function deletePersistentJson(key) {
+    const database = await openPersistentDatabaseWithTimeout();
+
+    if (!database) {
+        return;
+    }
+
+    try {
+        const transaction = database.transaction(persistentStoreName, "readwrite");
+        transaction.objectStore(persistentStoreName).delete(key);
+    } catch {
+        // LocalStorage deletion above is enough when IndexedDB cannot write.
+    }
+}
+
+async function restorePersistentStorage() {
+    const restoredValues = await Promise.all(
+        persistentKeys.map(async (key) => [key, await readPersistentJson(key, null).catch(() => null)])
+    ).catch(() => []);
+
+    restoredValues.forEach(([key, value]) => {
+        if (!value) {
+            return;
+        }
+
+        try {
+            localStorage.setItem(key, JSON.stringify(value));
+        } catch {
+            // The IndexedDB copy remains available when LocalStorage cannot be written.
+        }
+    });
+}
+
+function requestPersistentStorage() {
+    if (!navigator.storage?.persist) {
+        return;
+    }
+
+    navigator.storage.persist().catch(() => {});
+}
+
+function getDefaultSettings() {
     return {
         language: "en",
         theme: "light",
@@ -516,7 +670,13 @@ function readSettings() {
             precipitation: true,
             wind: true,
             uv: true
-        },
+        }
+    };
+}
+
+function readSettings() {
+    return {
+        ...getDefaultSettings(),
         ...readJson(settingsKey, {})
     };
 }
@@ -533,18 +693,20 @@ function saveSavedLocations() {
     writeJson(savedLocationsKey, savedLocations);
 }
 
-function readCachedWeather() {
-    try {
-        const cachedWeather = JSON.parse(localStorage.getItem(weatherCacheKey));
+function isValidCachedWeather(cachedWeather) {
+    return Boolean(cachedWeather?.location && cachedWeather?.data);
+}
 
-        if (!cachedWeather?.location || !cachedWeather?.data) {
-            return null;
-        }
+async function readCachedWeather() {
+    const cachedWeather = await readPersistentJson(weatherCacheKey, null);
 
-        return cachedWeather;
-    } catch {
-        return null;
-    }
+    return isValidCachedWeather(cachedWeather) ? cachedWeather : null;
+}
+
+function readCachedWeatherSync() {
+    const cachedWeather = readJson(weatherCacheKey, null);
+
+    return isValidCachedWeather(cachedWeather) ? cachedWeather : null;
 }
 
 function readLastLocation() {
@@ -603,14 +765,13 @@ function applySettings() {
 }
 
 function renderSavedLocations() {
-    const pinnedLocation = readPinnedLocation();
     savedLocationsElement.replaceChildren(...savedLocations.map((location, index) => {
         const isActive = currentLocation
             && Math.abs(location.latitude - currentLocation.latitude) < 0.001
             && Math.abs(location.longitude - currentLocation.longitude) < 0.001;
-        const isPinned = pinnedLocation
-            && Math.abs(location.latitude - pinnedLocation.latitude) < 0.001
-            && Math.abs(location.longitude - pinnedLocation.longitude) < 0.001;
+        const isPinned = currentPinnedLocation
+            && Math.abs(location.latitude - currentPinnedLocation.latitude) < 0.001
+            && Math.abs(location.longitude - currentPinnedLocation.longitude) < 0.001;
         const item = document.createElement("div");
         item.className = "saved-location";
         item.classList.toggle("active", isActive);
@@ -681,12 +842,11 @@ function deleteSavedLocation(index) {
     }
 
     savedLocations = savedLocations.filter((_, locationIndex) => locationIndex !== index);
-    const pinnedLocation = readPinnedLocation();
-
-    if (pinnedLocation
-        && Math.abs(pinnedLocation.latitude - location.latitude) < 0.001
-        && Math.abs(pinnedLocation.longitude - location.longitude) < 0.001) {
-        localStorage.removeItem(pinnedLocationKey);
+    if (currentPinnedLocation
+        && Math.abs(currentPinnedLocation.latitude - location.latitude) < 0.001
+        && Math.abs(currentPinnedLocation.longitude - location.longitude) < 0.001) {
+        currentPinnedLocation = null;
+        removeJson(pinnedLocationKey);
     }
 
     saveSavedLocations();
@@ -701,6 +861,7 @@ function pinSavedLocation(index) {
         return;
     }
 
+    currentPinnedLocation = location;
     savePinnedLocation(location);
     renderSavedLocations();
     setStatus(t("pinnedPlace", { name: location.name }));
@@ -1227,6 +1388,7 @@ async function loadLocation(location) {
         }
 
         if (shouldPinUrlLocation) {
+            currentPinnedLocation = location;
             savePinnedLocation(location);
             renderSavedLocations();
             shouldPinUrlLocation = false;
@@ -1463,7 +1625,7 @@ installButton.addEventListener("click", async () => {
 });
 
 dismissInstallButton.addEventListener("click", () => {
-    localStorage.setItem(installDismissedKey, "true");
+    writeJson(installDismissedKey, true);
     hideInstallBanner();
 });
 
@@ -1473,32 +1635,68 @@ document.addEventListener("keydown", (event) => {
     }
 });
 
-applyUrlOptions();
-applySettings();
-renderSavedLocations();
-registerServiceWorker();
-updateConnectionStatus();
-const cachedWeather = readCachedWeather();
-const lastLocation = readLastLocation();
-const pinnedLocation = readPinnedLocation();
-const startupLocation = startupUrlLocation || pinnedLocation || lastLocation;
+async function initializeApp() {
+    requestPersistentStorage();
 
-if (cachedWeather && (!startupLocation || cachedWeather.location.name === startupLocation.name)) {
-    renderWeather(cachedWeather.location, cachedWeather.data);
+    currentSettings = readSettings();
+    savedLocations = readSavedLocations();
+    currentPinnedLocation = readPinnedLocation();
 
-    if (isStale(cachedWeather.savedAt)) {
-        setStatus(t("staleData", { time: formatDate(cachedWeather.savedAt, { hour: "2-digit", minute: "2-digit" }) }));
-    } else {
-        setStatus(t("cachedForecast"));
+    applyUrlOptions();
+    applySettings();
+    renderSavedLocations();
+    registerServiceWorker();
+    updateConnectionStatus();
+
+    const cachedWeather = readCachedWeatherSync();
+    const lastLocation = readLastLocation();
+    const startupLocation = startupUrlLocation || currentPinnedLocation || lastLocation;
+    startupUsedFallbackLocation = !startupLocation;
+
+    if (cachedWeather && (!startupLocation || cachedWeather.location.name === startupLocation.name)) {
+        renderWeather(cachedWeather.location, cachedWeather.data);
+
+        if (isStale(cachedWeather.savedAt)) {
+            setStatus(t("staleData", { time: formatDate(cachedWeather.savedAt, { hour: "2-digit", minute: "2-digit" }) }));
+        } else {
+            setStatus(t("cachedForecast"));
+        }
     }
+
+    if (startupLocation && typeof startupLocation === "string") {
+        locationInput.value = startupLocation;
+        loadSearch(startupLocation);
+    } else if (startupLocation) {
+        locationInput.value = startupLocation.name;
+        loadLocation(startupLocation);
+    } else {
+        loadSearch(locationInput.value.trim() || "Berlin");
+    }
+
+    restorePersistentStorage().then(() => {
+        const restoredPinnedLocation = readPinnedLocation();
+        const restoredLastLocation = readLastLocation();
+        const restoredStartupLocation = restoredPinnedLocation || restoredLastLocation;
+
+        if (startupUsedFallbackLocation && restoredStartupLocation) {
+            startupUsedFallbackLocation = false;
+            locationInput.value = restoredStartupLocation.name;
+            loadLocation(restoredStartupLocation);
+        }
+
+        savedLocations = readSavedLocations();
+        currentPinnedLocation = restoredPinnedLocation;
+        renderSavedLocations();
+    }).catch(() => {});
 }
 
-if (startupLocation && typeof startupLocation === "string") {
-    locationInput.value = startupLocation;
-    loadSearch(startupLocation);
-} else if (startupLocation) {
-    locationInput.value = startupLocation.name;
-    loadLocation(startupLocation);
-} else {
-    loadSearch(locationInput.value);
-}
+initializeApp().catch(() => {
+    currentSettings = readSettings();
+    savedLocations = readSavedLocations();
+    applyUrlOptions();
+    applySettings();
+    renderSavedLocations();
+    registerServiceWorker();
+    updateConnectionStatus();
+    loadSearch(locationInput.value.trim() || "Berlin");
+});
