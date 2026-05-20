@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.2](https://github.com/ZehJulianLp/julianverse-weather/compare/v1.1.1...v1.1.2) (2026-05-20)
+
+
+### Bug Fixes
+
+* persist pwa startup location ([089be0c](https://github.com/ZehJulianLp/julianverse-weather/commit/089be0c89ba58501bb235b7a39564132baf3fd64))
+* persist pwa startup location ([816213f](https://github.com/ZehJulianLp/julianverse-weather/commit/816213fe54bcfd0aeb7e073ebb134efccc93dd0d))
+
 ## [1.1.1](https://github.com/ZehJulianLp/julianverse-weather/compare/v1.1.0...v1.1.1) (2026-05-20)
 
 
