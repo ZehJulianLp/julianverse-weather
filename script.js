@@ -394,6 +394,8 @@ function getUrlOptions() {
     const nextSettings = {};
     const chartNames = ["temperature", "precipitation", "wind", "uv"];
     const chartAliases = { rain: "precipitation" };
+    const latitude = params.has("lat") ? Number(params.get("lat")) : null;
+    const longitude = params.has("lon") ? Number(params.get("lon")) : null;
 
     if (["en", "de"].includes(params.get("lang"))) {
         nextSettings.language = params.get("lang");
@@ -426,8 +428,8 @@ function getUrlOptions() {
         settings: nextSettings,
         place: params.get("place"),
         name: params.get("name"),
-        latitude: Number(params.get("lat")),
-        longitude: Number(params.get("lon")),
+        latitude,
+        longitude,
         save: params.get("save") === "1",
         pin: params.get("pin") === "1",
         install: params.get("install")
