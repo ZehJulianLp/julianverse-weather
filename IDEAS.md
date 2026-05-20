@@ -18,10 +18,10 @@ Settings Menu with the points above:
 
 ## Roadmap
 
-1. Foundation: PWA basics, installability, accessibility, and reliable mobile layout.
-2. Core Weather: Current weather, hourly forecast, and 7-day forecast.
-3. Local Features: Saved locations via LocalStorage and a simple settings menu.
-4. Customization: Light/dark theme and compact/expanded layout modes.
-5. Internationalization: Start with English and German, then add more languages.
-6. Visuals: Temperature and precipitation charts.
-7. Advanced Features: Weather alerts and mobile widget research.
+1. Foundation: PWA basics, installability, accessibility, and reliable mobile layout. (Done)
+2. Core Weather: Current weather, hourly forecast, and 7-day forecast. (Done)
+3. Local Features: Saved locations via LocalStorage and a simple settings menu. (Done)
+4. Customization: Light/dark theme and compact/expanded layout modes. (Done)
+5. Internationalization: Start with English and German, then add more languages. (Done)
+6. Visuals: Temperature and precipitation charts. (Done)
+7. Advanced Features: Weather alerts (Done) and mobile widget research.

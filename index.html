@@ -13,20 +13,89 @@
     <script src="script.js" defer></script>
 </head>
 <body>
-    <a class="skip-link" href="#search-form">Skip to weather search</a>
-    <main id="main-content">
-        <section class="hero" aria-labelledby="page-title">
-            <p class="eyebrow">Open-Meteo forecast</p>
-            <h1 id="page-title">Julianverse Weather</h1>
-            <p>Search a city or use your current location to get a simple weather snapshot without tracking or API keys.</p>
+    <a class="skip-link" href="#search-form" data-i18n="skipLink">Skip to weather search</a>
+    <button class="menu-button" type="button" id="sidebar-toggle" aria-controls="app-sidebar" aria-expanded="false" data-i18n="menuButton">Places</button>
+    <div class="sidebar-backdrop" id="sidebar-backdrop" hidden></div>
+    <aside class="sidebar" id="app-sidebar" aria-label="Places and settings">
+        <div class="sidebar-header">
+            <h2 data-i18n="placesTitle">Places</h2>
+            <button class="text-button sidebar-close" type="button" id="sidebar-close" data-i18n="closeButton">Close</button>
+        </div>
+
+        <form class="sidebar-section search" id="search-form">
+            <label for="location-input" data-i18n="locationLabel">Location</label>
+            <input id="location-input" name="location" type="search" placeholder="Search city, e.g. Berlin" autocomplete="off" value="Berlin" data-i18n-placeholder="locationPlaceholder">
+            <button type="submit" data-i18n="searchButton">Search</button>
+            <button class="secondary" type="button" id="location-button" data-i18n="locationButton">Use my location</button>
+            <button class="secondary" type="button" id="save-location-button" data-i18n="saveLocationButton">Save place</button>
+        </form>
+
+        <section class="sidebar-section" aria-labelledby="saved-title">
+            <div class="section-heading">
+                <h3 id="saved-title" data-i18n="savedTitle">Saved places</h3>
+                <button class="text-button" type="button" id="clear-saved-button" data-i18n="clearSavedButton">Clear</button>
+            </div>
+            <p class="empty-state" id="saved-empty" data-i18n="savedEmpty">No saved places yet.</p>
+            <div class="saved-locations" id="saved-locations" aria-label="Saved places"></div>
         </section>
 
-        <form class="panel search" id="search-form">
-            <label for="location-input">Location</label>
-            <input id="location-input" name="location" type="search" placeholder="Search city, e.g. Berlin" autocomplete="off" value="Berlin">
-            <button type="submit">Search</button>
-            <button class="secondary" type="button" id="location-button">Use my location</button>
-        </form>
+        <section class="sidebar-section" aria-labelledby="settings-title">
+            <h3 id="settings-title" data-i18n="settingsTitle">Settings</h3>
+            <div class="settings-grid">
+                <label class="field-label" for="language-select">
+                    <span data-i18n="languageLabel">Language</span>
+                    <select id="language-select">
+                        <option value="en">English</option>
+                        <option value="de">Deutsch</option>
+                    </select>
+                </label>
+                <label class="field-label" for="theme-select">
+                    <span data-i18n="themeLabel">Theme</span>
+                    <select id="theme-select">
+                        <option value="light" data-i18n="themeLight">Light</option>
+                        <option value="dark" data-i18n="themeDark">Dark</option>
+                    </select>
+                </label>
+                <label class="field-label" for="layout-select">
+                    <span data-i18n="layoutLabel">Layout</span>
+                    <select id="layout-select">
+                        <option value="expanded" data-i18n="layoutExpanded">Expanded</option>
+                        <option value="compact" data-i18n="layoutCompact">Compact</option>
+                    </select>
+                </label>
+                <label class="field-label" for="units-select">
+                    <span data-i18n="unitsLabel">Units</span>
+                    <select id="units-select">
+                        <option value="metric" data-i18n="unitsMetric">Metric</option>
+                        <option value="imperial" data-i18n="unitsImperial">Imperial</option>
+                    </select>
+                </label>
+                <fieldset class="field-label chart-settings">
+                    <legend data-i18n="chartsTitle">Weather trends</legend>
+                    <label><input type="checkbox" class="chart-toggle" value="temperature" checked> <span data-i18n="temperatureChartTitle">Temperature</span></label>
+                    <label><input type="checkbox" class="chart-toggle" value="precipitation" checked> <span data-i18n="precipitationChartTitle">Rain chance</span></label>
+                    <label><input type="checkbox" class="chart-toggle" value="wind" checked> <span data-i18n="windChartTitle">Wind</span></label>
+                    <label><input type="checkbox" class="chart-toggle" value="uv" checked> <span data-i18n="uvChartTitle">UV</span></label>
+                </fieldset>
+            </div>
+        </section>
+    </aside>
+
+    <main id="main-content">
+        <section class="install-banner hidden" id="install-banner" aria-live="polite">
+            <p id="install-message" data-i18n="installReady">Julianverse Weather can be installed.</p>
+            <div>
+                <button type="button" id="install-button" data-i18n="installButton">Install</button>
+                <button class="secondary" type="button" id="dismiss-install-button" data-i18n="dismissButton">Dismiss</button>
+            </div>
+        </section>
+
+        <section class="hero" aria-labelledby="page-title">
+            <p class="eyebrow" data-i18n="eyebrow">Open-Meteo forecast</p>
+            <h1 id="page-title">Julianverse Weather</h1>
+            <p class="active-place" id="active-place">Berlin, Germany</p>
+            <p data-i18n="heroText">Search a city or use your current location to get a simple weather snapshot without tracking or API keys.</p>
+        </section>
 
         <p class="status" id="status" role="status" aria-live="polite">Ready.</p>
         <noscript>
@@ -34,29 +103,104 @@
         </noscript>
 
         <section class="weather hidden" id="weather" aria-label="Weather results">
+            <section class="overview-grid" aria-label="Weather overview">
+                <article class="panel glance-card">
+                    <h2 data-i18n="glanceTitle">Today at a glance</h2>
+                    <div class="glance-list" id="glance-list"></div>
+                </article>
+                <article class="panel alerts-card">
+                    <h2 data-i18n="alertsTitle">Weather alerts</h2>
+                    <div class="alerts-list" id="alerts-list"></div>
+                </article>
+            </section>
+
             <article class="panel current">
-                <div>
+                <div class="current-summary">
+                    <span class="weather-icon current-icon" id="current-icon" aria-hidden="true">?</span>
                     <p class="place" id="place">-</p>
                     <p class="temperature" id="temperature">--&deg;</p>
                     <p class="summary" id="summary">-</p>
+                    <p class="insight" id="insight">-</p>
                 </div>
                 <div class="meta" aria-label="Current weather details">
                     <div class="meta-item">
-                        <span>Wind</span>
+                        <span data-i18n="windLabel">Wind</span>
                         <strong id="wind">-</strong>
                     </div>
                     <div class="meta-item">
-                        <span>Humidity</span>
+                        <span data-i18n="directionLabel">Direction</span>
+                        <strong id="wind-direction">-</strong>
+                    </div>
+                    <div class="meta-item">
+                        <span data-i18n="humidityLabel">Humidity</span>
                         <strong id="humidity">-</strong>
                     </div>
                     <div class="meta-item">
-                        <span>Updated</span>
+                        <span data-i18n="feelsLikeLabel">Feels like</span>
+                        <strong id="apparent">-</strong>
+                    </div>
+                    <div class="meta-item">
+                        <span data-i18n="pressureLabel">Pressure</span>
+                        <strong id="pressure">-</strong>
+                    </div>
+                    <div class="meta-item">
+                        <span data-i18n="cloudsLabel">Clouds</span>
+                        <strong id="clouds">-</strong>
+                    </div>
+                    <div class="meta-item">
+                        <span data-i18n="visibilityLabel">Visibility</span>
+                        <strong id="visibility">-</strong>
+                    </div>
+                    <div class="meta-item">
+                        <span data-i18n="sunriseLabel">Sunrise</span>
+                        <strong id="sunrise">-</strong>
+                    </div>
+                    <div class="meta-item">
+                        <span data-i18n="sunsetLabel">Sunset</span>
+                        <strong id="sunset">-</strong>
+                    </div>
+                    <div class="meta-item">
+                        <span data-i18n="updatedLabel">Updated</span>
                         <strong id="updated">-</strong>
                     </div>
                 </div>
             </article>
 
-            <div class="forecast" id="forecast" aria-label="Five day forecast"></div>
+            <section class="forecast-section" aria-labelledby="hourly-title">
+                <h2 id="hourly-title" data-i18n="hourlyTitle">Next hours</h2>
+                <div class="hourly-shell">
+                    <button class="scroll-button" type="button" id="hourly-prev" aria-label="Previous hours">←</button>
+                    <div class="hourly-forecast" id="hourly-forecast" aria-label="Hourly forecast"></div>
+                    <button class="scroll-button" type="button" id="hourly-next" aria-label="Next hours">→</button>
+                </div>
+            </section>
+
+            <section class="forecast-section" aria-labelledby="charts-title">
+                <h2 id="charts-title" data-i18n="chartsTitle">Weather trends</h2>
+                <div class="charts">
+                    <article class="panel chart-card" data-chart-card="temperature">
+                        <h3 data-i18n="temperatureChartTitle">Temperature</h3>
+                        <div class="chart" id="temperature-chart" aria-label="Temperature trend"></div>
+                    </article>
+                    <article class="panel chart-card" data-chart-card="precipitation">
+                        <h3 data-i18n="precipitationChartTitle">Rain chance</h3>
+                        <div class="chart" id="precipitation-chart" aria-label="Rain chance trend"></div>
+                    </article>
+                    <article class="panel chart-card" data-chart-card="wind">
+                        <h3 data-i18n="windChartTitle">Wind</h3>
+                        <div class="chart" id="wind-chart" aria-label="Wind trend"></div>
+                    </article>
+                    <article class="panel chart-card" data-chart-card="uv">
+                        <h3 data-i18n="uvChartTitle">UV</h3>
+                        <div class="chart" id="uv-chart" aria-label="UV trend"></div>
+                    </article>
+                </div>
+            </section>
+
+            <section class="forecast-section" aria-labelledby="daily-title">
+                <h2 id="daily-title" data-i18n="dailyTitle">7-day forecast</h2>
+                <div class="forecast" id="forecast" aria-label="Seven day forecast"></div>
+            </section>
         </section>
     </main>
 

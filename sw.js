@@ -1,4 +1,4 @@
-const CACHE_NAME = "julianverse-weather-v1";
+const CACHE_NAME = "julianverse-weather-v29";
 const APP_SHELL = [
     "./",
     "./index.html",
@@ -30,6 +30,13 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
     if (event.request.method !== "GET") {
+        return;
+    }
+
+    const requestUrl = new URL(event.request.url);
+
+    if (requestUrl.origin !== self.location.origin) {
+        event.respondWith(fetch(event.request));
         return;
     }
 
