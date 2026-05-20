@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+    <title id="title">Julianverse Weather icon</title>
+    <desc id="desc">A sun rising behind a cloud on a teal background.</desc>
+    <rect width="512" height="512" rx="96" fill="#245f73"/>
+    <circle cx="246" cy="220" r="94" fill="#f7c948"/>
+    <path fill="#ffffff" d="M166 340c-43 0-78-34-78-76s35-76 78-76c12 0 24 3 34 8 24-41 69-68 120-68 77 0 140 62 140 139 0 3 0 6-1 9 26 11 45 37 45 67 0 40-33 73-73 73H166z"/>
+    <path fill="#dce9ec" d="M166 340c-37 0-68-26-76-60 17 18 41 29 68 29h266c25 0 48-12 62-31 11 13 18 30 18 48 0 40-33 73-73 73H166z" opacity="0.9"/>
+</svg>

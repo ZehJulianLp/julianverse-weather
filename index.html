@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#245f73">
+    <meta name="description" content="A private, lightweight weather app powered by Open-Meteo.">
+    <title>Julianverse Weather</title>
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <a class="skip-link" href="#search-form">Skip to weather search</a>
+    <main id="main-content">
+        <section class="hero" aria-labelledby="page-title">
+            <p class="eyebrow">Open-Meteo forecast</p>
+            <h1 id="page-title">Julianverse Weather</h1>
+            <p>Search a city or use your current location to get a simple weather snapshot without tracking or API keys.</p>
+        </section>
+
+        <form class="panel search" id="search-form">
+            <label for="location-input">Location</label>
+            <input id="location-input" name="location" type="search" placeholder="Search city, e.g. Berlin" autocomplete="off" value="Berlin">
+            <button type="submit">Search</button>
+            <button class="secondary" type="button" id="location-button">Use my location</button>
+        </form>
+
+        <p class="status" id="status" role="status" aria-live="polite">Ready.</p>
+        <noscript>
+            <p class="status error">JavaScript is required to load weather data from Open-Meteo.</p>
+        </noscript>
+
+        <section class="weather hidden" id="weather" aria-label="Weather results">
+            <article class="panel current">
+                <div>
+                    <p class="place" id="place">-</p>
+                    <p class="temperature" id="temperature">--&deg;</p>
+                    <p class="summary" id="summary">-</p>
+                </div>
+                <div class="meta" aria-label="Current weather details">
+                    <div class="meta-item">
+                        <span>Wind</span>
+                        <strong id="wind">-</strong>
+                    </div>
+                    <div class="meta-item">
+                        <span>Humidity</span>
+                        <strong id="humidity">-</strong>
+                    </div>
+                    <div class="meta-item">
+                        <span>Updated</span>
+                        <strong id="updated">-</strong>
+                    </div>
+                </div>
+            </article>
+
+            <div class="forecast" id="forecast" aria-label="Five day forecast"></div>
+        </section>
+    </main>
+
+</body>
+</html>
