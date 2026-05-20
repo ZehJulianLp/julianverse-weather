@@ -35,6 +35,8 @@ const weatherCodes = {
     99: "Severe thunderstorm with hail"
 };
 
+const isServiceWorkerAvailable = "serviceWorker" in navigator && window.isSecureContext;
+
 const setLoading = (isLoading) => {
     searchForm.querySelectorAll("button, input").forEach((element) => {
         element.disabled = isLoading;
@@ -121,6 +123,22 @@ function renderWeather(location, data) {
     weatherElement.classList.remove("hidden");
 }
 
+function registerServiceWorker() {
+    if (!isServiceWorkerAvailable) {
+        return;
+    }
+
+    navigator.serviceWorker.register("./sw.js").catch(() => {
+        setStatus("Weather works online, but offline install support is unavailable.", true);
+    });
+}
+
+function updateConnectionStatus() {
+    if (!navigator.onLine) {
+        setStatus("You are offline. Previously viewed app files may still be available.", true);
+    }
+}
+
 async function loadLocation(location) {
     setLoading(true);
     setStatus(`Loading weather for ${location.name}...`);
@@ -187,4 +205,11 @@ locationButton.addEventListener("click", () => {
     );
 });
 
+window.addEventListener("offline", updateConnectionStatus);
+window.addEventListener("online", () => {
+    setStatus("Back online.");
+});
+
+registerServiceWorker();
+updateConnectionStatus();
 loadSearch(locationInput.value);

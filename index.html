@@ -3,12 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#245f73">
+    <meta name="description" content="A private, lightweight weather app powered by Open-Meteo.">
     <title>Julianverse Weather</title>
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
     <link rel="stylesheet" href="styles.css">
     <script src="script.js" defer></script>
 </head>
 <body>
-    <main>
+    <a class="skip-link" href="#search-form">Skip to weather search</a>
+    <main id="main-content">
         <section class="hero" aria-labelledby="page-title">
             <p class="eyebrow">Open-Meteo forecast</p>
             <h1 id="page-title">Julianverse Weather</h1>
@@ -23,6 +29,9 @@
         </form>
 
         <p class="status" id="status" role="status" aria-live="polite">Ready.</p>
+        <noscript>
+            <p class="status error">JavaScript is required to load weather data from Open-Meteo.</p>
+        </noscript>
 
         <section class="weather hidden" id="weather" aria-label="Weather results">
             <article class="panel current">
