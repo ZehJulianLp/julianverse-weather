@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/ZehJulianLp/julianverse-weather/compare/v1.1.2...v1.2.0) (2026-08-17)
+
+
+### Features
+
+* add customizable weather intelligence dashboard ([2920986](https://github.com/ZehJulianLp/julianverse-weather/commit/29209866b61c6ebea489e0b2f00243bf0619ef37))
+
 ## [1.1.2](https://github.com/ZehJulianLp/julianverse-weather/compare/v1.1.1...v1.1.2) (2026-05-20)
 
 
