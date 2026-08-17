@@ -520,7 +520,7 @@ body[data-layout="compact"] .temperature {
 }
 
 body[data-layout="compact"] .hourly-forecast {
-    grid-template-columns: repeat(12, minmax(150px, 1fr));
+    grid-template-columns: repeat(24, minmax(150px, 1fr));
 }
 
 .current-icon {
@@ -760,7 +760,7 @@ body[data-layout="compact"] .hourly-forecast {
 
 .hourly-forecast {
     display: grid;
-    grid-template-columns: repeat(12, minmax(172px, 1fr));
+    grid-template-columns: repeat(24, minmax(172px, 1fr));
     gap: 14px;
     overflow-x: auto;
     padding-bottom: 6px;
@@ -981,10 +981,979 @@ body[data-layout="compact"] .hourly-forecast {
     }
 }
 
+/* Classic dashboard layout */
+:root {
+    --bg: #f1f3f5;
+    --panel: #ffffff;
+    --panel-solid: #ffffff;
+    --text: #1d2730;
+    --muted: #65717c;
+    --line: #d8dee3;
+    --accent: #176b87;
+    --accent-dark: #10556c;
+    --sky: #397da5;
+    --warm: #ad6d19;
+    --shadow: 0 1px 3px rgba(20, 35, 45, 0.08);
+}
+
+body[data-theme="dark"] {
+    --bg: #15191d;
+    --panel: #20262b;
+    --panel-solid: #20262b;
+    --text: #f0f3f5;
+    --muted: #aeb7be;
+    --line: #3a434a;
+    --accent: #74bad3;
+    --accent-dark: #9acfe1;
+    --sky: #74aeca;
+    --warm: #d6a45e;
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+body {
+    padding-left: 300px;
+}
+
+main,
+body[data-layout="compact"] main {
+    width: min(1160px, calc(100% - 40px));
+    padding-block: 32px 48px;
+}
+
+.sidebar {
+    width: 300px;
+    background: var(--panel);
+    box-shadow: none;
+}
+
+.hero {
+    margin-bottom: 16px;
+    padding: 0 0 12px;
+    border-bottom: 1px solid var(--line);
+}
+
+h1 {
+    font-size: clamp(2.4rem, 5vw, 4.6rem);
+    line-height: 0.98;
+    letter-spacing: -0.055em;
+}
+
+.hero .active-place {
+    margin-top: 8px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    padding: 0;
+    box-shadow: none;
+    color: var(--accent);
+}
+
+.panel,
+.install-banner,
+.saved-location,
+.notification-setting,
+.chart-settings label,
+input,
+button,
+select {
+    border-radius: 8px;
+}
+
+.panel,
+.install-banner {
+    background: var(--panel);
+    backdrop-filter: none;
+    box-shadow: var(--shadow);
+}
+
+.weather > .current {
+    order: 1;
+}
+
+.weather > .overview-grid {
+    order: 2;
+}
+
+.weather > .intelligence-grid {
+    order: 3;
+}
+
+.weather > .recommendation-card {
+    order: 4;
+}
+
+.weather > .signal-grid {
+    order: 5;
+}
+
+.weather > .forecast-section {
+    order: 6;
+}
+
+.weather {
+    gap: 18px;
+}
+
+.current {
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 0.75fr);
+    padding: 24px;
+}
+
+.temperature {
+    font-size: clamp(4rem, 10vw, 7rem);
+}
+
+.overview-grid,
+.intelligence-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.intelligence-grid.single-module {
+    grid-template-columns: 1fr;
+}
+
+.nowcast-card,
+.rain-map-card,
+.recommendation-card,
+.signal-card,
+.glance-card,
+.alerts-card,
+.chart-card {
+    padding: 18px;
+}
+
+.feature-lead {
+    font-size: clamp(1.15rem, 1.8vw, 1.5rem);
+}
+
+.model-badge,
+.recommendation-chips span,
+.map-time-button {
+    border-radius: 4px;
+}
+
+.rain-map {
+    aspect-ratio: 1.75;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: #e9eef1;
+}
+
+body[data-theme="dark"] .rain-map {
+    background: #182025;
+}
+
+.rain-map-cell {
+    border-radius: 2px;
+}
+
+.map-legend i {
+    width: 8px;
+    border: 1px solid color-mix(in srgb, var(--sky), #000 14%);
+    border-radius: 2px;
+}
+
+.recommendation-card {
+    grid-template-columns: minmax(180px, 0.5fr) minmax(280px, 1fr) auto;
+    border-left: 4px solid var(--accent);
+}
+
+.signal-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.signal-card {
+    min-height: 205px;
+}
+
+.signal-icon {
+    width: 32px;
+    height: 32px;
+    margin-bottom: 14px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--bg);
+}
+
+.site-footer {
+    text-align: center;
+}
+
+@media (max-width: 1050px) {
+    .intelligence-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .rain-map {
+        aspect-ratio: 2.2;
+    }
+
+    .recommendation-card {
+        grid-template-columns: 1fr 1.4fr;
+    }
+
+    .recommendation-chips {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 760px) {
+    body {
+        padding-left: 0;
+    }
+
+    main,
+    body[data-layout="compact"] main {
+        width: min(100% - 20px, 1160px);
+        padding-top: 68px;
+    }
+
+    .current,
+    .overview-grid,
+    .recommendation-card,
+    .signal-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .recommendation-chips,
+    .signal-card,
+    .signal-card:nth-child(4),
+    .signal-card:nth-child(5),
+    .signal-card:last-child {
+        grid-column: auto;
+    }
+
+    .rain-map {
+        aspect-ratio: 1.6;
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
     *::after {
         scroll-behavior: auto !important;
+    }
+}
+
+/* Weather intelligence redesign */
+:root {
+    --bg: #eef3f0;
+    --panel: rgba(255, 255, 255, 0.86);
+    --panel-solid: #ffffff;
+    --text: #10231d;
+    --muted: #62716c;
+    --line: rgba(25, 68, 55, 0.14);
+    --accent: #146c58;
+    --accent-dark: #0a5141;
+    --sky: #4361ee;
+    --warm: #f0a84b;
+    --shadow: 0 20px 55px rgba(28, 63, 52, 0.09);
+}
+
+body[data-theme="dark"] {
+    --bg: #091410;
+    --panel: rgba(20, 39, 32, 0.88);
+    --panel-solid: #142720;
+    --text: #f2f8f5;
+    --muted: #a3b6ae;
+    --line: rgba(184, 221, 207, 0.15);
+    --accent: #67d5b5;
+    --accent-dark: #9ce5d0;
+    --sky: #8aa0ff;
+    --warm: #ffc978;
+    --shadow: 0 20px 55px rgba(0, 0, 0, 0.3);
+}
+
+body {
+    background: var(--bg);
+}
+
+main {
+    width: min(1240px, calc(100% - 56px));
+    padding-block: 38px 54px;
+}
+
+body[data-layout="compact"] main {
+    width: min(1080px, calc(100% - 56px));
+}
+
+.hero {
+    position: relative;
+    gap: 8px;
+    margin-bottom: 22px;
+    padding: 10px 0 18px;
+}
+
+h1 {
+    max-width: 900px;
+    font-size: clamp(2.7rem, 7vw, 6.4rem);
+    line-height: 0.88;
+}
+
+.hero .active-place {
+    width: fit-content;
+    margin-top: 10px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--panel);
+    padding: 7px 12px;
+    color: var(--text);
+    box-shadow: 0 8px 24px rgba(28, 63, 52, 0.06);
+}
+
+.panel,
+.install-banner {
+    border-radius: 20px;
+    backdrop-filter: blur(16px);
+}
+
+.sidebar {
+    background: color-mix(in srgb, var(--panel-solid), var(--bg) 26%);
+    box-shadow: 12px 0 42px rgba(28, 63, 52, 0.05);
+}
+
+.sidebar-section,
+.sidebar .search {
+    border-color: var(--line);
+}
+
+.notification-setting {
+    position: static;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    width: auto;
+    height: auto;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 10px 12px;
+    background: color-mix(in srgb, var(--panel), var(--bg) 30%);
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+}
+
+.notification-setting span,
+.notification-setting strong,
+.notification-setting small {
+    display: block;
+}
+
+.notification-setting small {
+    margin-top: 2px;
+    color: var(--muted);
+}
+
+.notification-setting input {
+    appearance: none;
+    position: relative;
+    width: 44px;
+    min-height: 26px;
+    border-radius: 999px;
+    padding: 0;
+    background: var(--line);
+    cursor: pointer;
+}
+
+.notification-setting input::after {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--panel-solid);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+    content: "";
+    transition: transform 160ms ease;
+}
+
+.notification-setting input:checked {
+    background: var(--accent);
+}
+
+.notification-setting input:checked::after {
+    transform: translateX(18px);
+}
+
+.weather {
+    gap: 22px;
+}
+
+.intelligence-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+    gap: 16px;
+}
+
+.nowcast-card,
+.rain-map-card,
+.recommendation-card,
+.signal-card {
+    padding: 22px;
+}
+
+.card-heading {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.card-heading h2,
+.recommendation-card h2,
+.signal-card h2 {
+    margin: 2px 0 0;
+    font-size: 1.08rem;
+}
+
+.kicker {
+    margin: 0;
+    color: var(--accent);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.model-badge {
+    flex: none;
+    border: 1px solid color-mix(in srgb, var(--sky), transparent 70%);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--sky), transparent 90%);
+    padding: 6px 9px;
+    color: var(--sky);
+    font-size: 0.72rem;
+    font-weight: 800;
+}
+
+.feature-lead {
+    margin: 20px 0;
+    font-size: clamp(1.25rem, 2.2vw, 1.8rem);
+    font-weight: 720;
+    line-height: 1.18;
+    letter-spacing: -0.025em;
+}
+
+.data-note,
+.signal-card small {
+    display: block;
+    margin: 14px 0 0;
+    color: var(--muted);
+    font-size: 0.78rem;
+}
+
+.rain-timeline {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(18px, 1fr));
+    gap: 5px;
+    height: 118px;
+    align-items: end;
+    border-bottom: 1px solid var(--line);
+}
+
+.rain-step {
+    display: grid;
+    height: 100%;
+    grid-template-rows: minmax(0, 1fr) 24px;
+    align-items: end;
+    gap: 5px;
+}
+
+.rain-step time {
+    overflow: visible;
+    color: var(--muted);
+    font-size: 0.65rem;
+    white-space: nowrap;
+}
+
+.rain-bar {
+    display: block;
+    width: 100%;
+    height: var(--rain-height);
+    min-height: 4px;
+    border-radius: 5px 5px 1px 1px;
+    background: var(--sky);
+}
+
+.map-controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: end;
+    gap: 4px;
+}
+
+.map-time-button {
+    min-height: 30px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 0 9px;
+    background: transparent;
+    color: var(--muted);
+    font-size: 0.72rem;
+}
+
+.map-time-button[aria-pressed="true"] {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: #fff;
+}
+
+.rain-map-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.rain-map {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 3px;
+    aspect-ratio: 1.6;
+    border-radius: 15px;
+    background: color-mix(in srgb, var(--panel-solid), var(--bg) 45%);
+    padding: 10px;
+    overflow: hidden;
+}
+
+.rain-map-cell {
+    position: relative;
+    min-width: 0;
+    border-radius: 5px;
+    transition: background 180ms ease;
+}
+
+.location-dot {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 13px;
+    height: 13px;
+    transform: translate(-50%, -50%);
+    border: 3px solid #fff;
+    border-radius: 50%;
+    background: var(--accent-dark);
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.15);
+}
+
+.map-north {
+    position: absolute;
+    z-index: 2;
+    left: 8px;
+    top: 6px;
+    color: var(--text);
+    font-size: 0.65rem;
+    font-weight: 900;
+}
+
+.map-legend {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--muted);
+    font-size: 0.62rem;
+}
+
+.map-legend i {
+    width: 7px;
+    min-height: 70px;
+    flex: 1;
+    margin-block: 5px;
+    border-radius: 999px;
+    background: var(--sky);
+}
+
+.recommendation-card {
+    display: grid;
+    grid-template-columns: minmax(190px, 0.55fr) minmax(280px, 1fr) auto;
+    align-items: center;
+    gap: 24px;
+    background: var(--panel);
+}
+
+.recommendation-card .feature-lead {
+    margin: 0;
+}
+
+.recommendation-chips {
+    display: flex;
+    max-width: 280px;
+    flex-wrap: wrap;
+    justify-content: end;
+    gap: 7px;
+}
+
+.recommendation-chips span {
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--panel);
+    padding: 6px 10px;
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.signal-grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.signal-card {
+    grid-column: span 2;
+    min-height: 225px;
+}
+
+.signal-card:nth-child(4),
+.signal-card:nth-child(5) {
+    grid-column: span 3;
+}
+
+.signal-icon {
+    display: grid;
+    width: 36px;
+    height: 36px;
+    place-items: center;
+    margin: 0 0 20px;
+    border-radius: 11px;
+    background: color-mix(in srgb, var(--accent), transparent 88%);
+    color: var(--accent);
+    font-size: 1.25rem;
+    font-weight: 800;
+}
+
+.signal-card > div {
+    margin-top: 18px;
+}
+
+.signal-card p:not(.kicker, .signal-icon) {
+    margin: 7px 0 0;
+    color: var(--muted);
+}
+
+.signal-card .signal-value {
+    color: var(--text) !important;
+    font-size: 1.08rem;
+    font-weight: 750;
+    line-height: 1.3;
+}
+
+.overview-grid {
+    grid-template-columns: 1.25fr 0.75fr;
+}
+
+.current {
+    overflow: hidden;
+    border-radius: 10px;
+    background: var(--panel);
+}
+
+.site-footer {
+    margin-top: 28px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 0.8rem;
+}
+
+.site-footer a {
+    color: var(--accent);
+}
+
+@media (max-width: 1100px) {
+    .intelligence-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .rain-map {
+        aspect-ratio: 2.2;
+    }
+
+    .recommendation-card {
+        grid-template-columns: 1fr 1.5fr;
+    }
+
+    .recommendation-chips {
+        grid-column: 1 / -1;
+        max-width: none;
+        justify-content: start;
+    }
+
+    .signal-card {
+        grid-column: span 3;
+    }
+
+    .signal-card:last-child {
+        grid-column: span 6;
+    }
+}
+
+@media (max-width: 760px) {
+    main,
+    body[data-layout="compact"] main {
+        width: min(100% - 20px, 1240px);
+    }
+
+    .hero {
+        padding-top: 0;
+    }
+
+    .intelligence-grid,
+    .recommendation-card,
+    .signal-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .recommendation-card {
+        gap: 14px;
+    }
+
+    .recommendation-chips,
+    .signal-card,
+    .signal-card:nth-child(4),
+    .signal-card:nth-child(5),
+    .signal-card:last-child {
+        grid-column: auto;
+    }
+
+    .signal-card {
+        min-height: 0;
+    }
+
+    .overview-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .rain-map {
+        aspect-ratio: 1.55;
+    }
+}
+
+@media (max-width: 480px) {
+    .nowcast-card,
+    .rain-map-card,
+    .recommendation-card,
+    .signal-card {
+        padding: 17px;
+    }
+
+    .card-heading {
+        display: grid;
+    }
+
+    .map-controls {
+        justify-content: start;
+    }
+
+    .rain-timeline {
+        gap: 3px;
+    }
+
+    .rain-step time {
+        font-size: 0.56rem;
+    }
+}
+
+/* Final classic-theme overrides */
+:root {
+    --bg: #f1f3f5;
+    --panel: #ffffff;
+    --panel-solid: #ffffff;
+    --text: #1d2730;
+    --muted: #65717c;
+    --line: #d8dee3;
+    --accent: #176b87;
+    --accent-dark: #10556c;
+    --sky: #397da5;
+    --warm: #ad6d19;
+    --shadow: 0 1px 3px rgba(20, 35, 45, 0.08);
+}
+
+body[data-theme="dark"] {
+    --bg: #15191d;
+    --panel: #20262b;
+    --panel-solid: #20262b;
+    --text: #f0f3f5;
+    --muted: #aeb7be;
+    --line: #3a434a;
+    --accent: #74bad3;
+    --accent-dark: #9acfe1;
+    --sky: #74aeca;
+    --warm: #d6a45e;
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+body {
+    padding-left: 300px;
+}
+
+main,
+body[data-layout="compact"] main {
+    width: min(1160px, calc(100% - 40px));
+    padding-block: 32px 48px;
+}
+
+.sidebar {
+    width: 300px;
+    background: var(--panel);
+    box-shadow: none;
+}
+
+.hero {
+    margin-bottom: 16px;
+    padding: 0 0 12px;
+    border-bottom: 1px solid var(--line);
+}
+
+h1 {
+    font-size: clamp(2.4rem, 5vw, 4.6rem);
+    line-height: 0.98;
+    letter-spacing: -0.055em;
+}
+
+.hero .active-place {
+    margin-top: 8px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    padding: 0;
+    box-shadow: none;
+    color: var(--accent);
+}
+
+.panel,
+.install-banner {
+    border-radius: 8px;
+    background: var(--panel);
+    backdrop-filter: none;
+    box-shadow: var(--shadow);
+}
+
+.weather > .current { order: 1; }
+.weather > .overview-grid { order: 2; }
+.weather > .intelligence-grid { order: 3; }
+.weather > .recommendation-card { order: 4; }
+.weather > .signal-grid { order: 5; }
+.weather > .forecast-section { order: 6; }
+
+.weather {
+    gap: 18px;
+}
+
+.current {
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 0.75fr);
+    padding: 24px;
+    border-radius: 8px;
+}
+
+.temperature {
+    font-size: clamp(4rem, 10vw, 7rem);
+}
+
+.overview-grid,
+.intelligence-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.nowcast-card,
+.rain-map-card,
+.recommendation-card,
+.signal-card,
+.glance-card,
+.alerts-card,
+.chart-card {
+    padding: 18px;
+}
+
+.feature-lead {
+    font-size: clamp(1.15rem, 1.8vw, 1.5rem);
+}
+
+.model-badge,
+.recommendation-chips span,
+.map-time-button {
+    border-radius: 4px;
+}
+
+.rain-map {
+    aspect-ratio: 1.75;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: #e9eef1;
+}
+
+body[data-theme="dark"] .rain-map {
+    background: #182025;
+}
+
+.rain-map-cell {
+    border-radius: 2px;
+}
+
+.recommendation-card {
+    grid-template-columns: minmax(180px, 0.5fr) minmax(280px, 1fr) auto;
+    border-left: 4px solid var(--accent);
+}
+
+.signal-grid {
+    gap: 12px;
+}
+
+.signal-card {
+    min-height: 205px;
+}
+
+.signal-icon {
+    width: 32px;
+    height: 32px;
+    margin-bottom: 14px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--bg);
+}
+
+@media (max-width: 1050px) {
+    .intelligence-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .rain-map {
+        aspect-ratio: 2.2;
+    }
+
+    .recommendation-card {
+        grid-template-columns: 1fr 1.4fr;
+    }
+}
+
+@media (max-width: 760px) {
+    body {
+        padding-left: 0;
+    }
+
+    main,
+    body[data-layout="compact"] main {
+        width: min(100% - 20px, 1160px);
+        padding-top: 68px;
+    }
+
+    .current,
+    .overview-grid,
+    .recommendation-card,
+    .signal-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .rain-map {
+        aspect-ratio: 1.6;
     }
 }

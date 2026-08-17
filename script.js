@@ -12,6 +12,8 @@ const languageSelect = document.querySelector("#language-select");
 const themeSelect = document.querySelector("#theme-select");
 const layoutSelect = document.querySelector("#layout-select");
 const unitsSelect = document.querySelector("#units-select");
+const activitySelect = document.querySelector("#activity-select");
+const rainNotificationsToggle = document.querySelector("#rain-notifications-toggle");
 const installBanner = document.querySelector("#install-banner");
 const installMessage = document.querySelector("#install-message");
 const installButton = document.querySelector("#install-button");
@@ -44,7 +46,27 @@ const precipitationChartElement = document.querySelector("#precipitation-chart")
 const windChartElement = document.querySelector("#wind-chart");
 const uvChartElement = document.querySelector("#uv-chart");
 const chartToggleElements = document.querySelectorAll(".chart-toggle");
+const moduleToggleElements = document.querySelectorAll(".module-toggle");
 const forecastElement = document.querySelector("#forecast");
+const nowcastSummaryElement = document.querySelector("#nowcast-summary");
+const rainTimelineElement = document.querySelector("#rain-timeline");
+const rainMapElement = document.querySelector("#rain-map");
+const rainMapControlsElement = document.querySelector("#rain-map-controls");
+const rainMapCaptionElement = document.querySelector("#rain-map-caption");
+const recommendationSummaryElement = document.querySelector("#recommendation-summary");
+const recommendationChipsElement = document.querySelector("#recommendation-chips");
+const confidenceContentElement = document.querySelector("#confidence-content");
+const sunContentElement = document.querySelector("#sun-content");
+const stormContentElement = document.querySelector("#storm-content");
+const airContentElement = document.querySelector("#air-content");
+const historyContentElement = document.querySelector("#history-content");
+
+// Keep the visual and assistive-technology reading order aligned with the dashboard hierarchy.
+const currentPanelElement = document.querySelector(".current");
+const overviewGridElement = document.querySelector(".overview-grid");
+const intelligenceGridElement = document.querySelector(".intelligence-grid");
+weatherElement.prepend(currentPanelElement);
+weatherElement.insertBefore(overviewGridElement, intelligenceGridElement);
 
 const weatherCodeLabels = {
     en: {
@@ -139,7 +161,7 @@ const translations = {
         precipitationChartTitle: "Rain chance",
         windChartTitle: "Wind",
         uvChartTitle: "UV",
-        dailyTitle: "7-day forecast",
+        dailyTitle: "Next 7 days",
         glanceTitle: "Today at a glance",
         alertsTitle: "Weather alerts",
         highLabel: "High",
@@ -192,6 +214,92 @@ const translations = {
         yourLocation: "Your location",
         mixedWeather: "Mixed weather",
         feelsPrefix: "Feels"
+        ,activityLabel: "Activity",
+        activityGeneral: "Everyday",
+        activityWalking: "Walking",
+        activityCycling: "Cycling",
+        activityRunning: "Running",
+        activityGarden: "Garden",
+        activityPhoto: "Photography",
+        rainNotificationsLabel: "Rain notifications",
+        rainNotificationsHint: "While the app is open",
+        nowcastKicker: "Next 3 hours",
+        nowcastTitle: "Rain nowcast",
+        modelForecast: "Model forecast",
+        nowcastNote: "15-minute forecast; not measured radar data.",
+        rainMapKicker: "Around your location",
+        rainMapTitle: "Local rain map",
+        rainMapNote: "Forecast grid, not radar measurements.",
+        dryLabel: "Dry",
+        heavyLabel: "Heavy",
+        dailyBriefingKicker: "Personal briefing",
+        dailyBriefingTitle: "Your best weather window",
+        confidenceKicker: "Forecast signal",
+        confidenceTitle: "Confidence & changes",
+        sunKicker: "Daylight",
+        sunTitle: "Sun window",
+        stormKicker: "Convection",
+        stormTitle: "Thunderstorm potential",
+        airKicker: "Air & pollen",
+        airTitle: "Outside conditions",
+        historyKicker: "A year ago",
+        historyTitle: "Historical comparison",
+        dataBy: "Weather data by",
+        rainStarts: "Rain likely in about {minutes} min, lasting around {duration}.",
+        rainNow: "Rain is expected now for around {duration}.",
+        noRainSoon: "No meaningful rain expected in the next three hours.",
+        rainTotal: "{amount} total",
+        mapAt: "Forecast for {time}",
+        bestWindow: "Best window for {activity}: {start}–{end}.",
+        noGoodWindow: "No ideal window today; the least unsettled period starts near {time}.",
+        conditionsGood: "Good conditions",
+        takeJacket: "Take a jacket",
+        sunProtection: "Sun protection",
+        rainProtection: "Rain protection",
+        breezy: "Breezy",
+        confidenceHigh: "High confidence",
+        confidenceMedium: "Medium confidence",
+        confidenceLow: "Low confidence",
+        confidenceDetail: "Based on rain probability and short-term stability.",
+        forecastWarmer: "Forecast is {value} warmer than the last update.",
+        forecastCooler: "Forecast is {value} cooler than the last update.",
+        forecastWetter: "Rain estimate increased by {value}.",
+        forecastStable: "No meaningful change since the last update.",
+        firstLoadChange: "Changes will appear after the next forecast update.",
+        sunWindow: "Clearest period: {start}–{end}.",
+        sunUnavailable: "No distinct sunny window today.",
+        stormLow: "Low thunderstorm potential.",
+        stormRaised: "Elevated potential around {time} (CAPE {cape}).",
+        stormHigh: "High thunderstorm potential around {time} (CAPE {cape}).",
+        modelWarning: "Model guidance, not an official warning.",
+        airGood: "Air quality is good",
+        airFair: "Air quality is fair",
+        airPoor: "Air quality is poor",
+        pollenLow: "Pollen low",
+        pollenMedium: "Pollen moderate",
+        pollenHigh: "Pollen high",
+        pollenUnavailable: "Pollen unavailable",
+        airUnavailable: "Air-quality data unavailable.",
+        historyWarmer: "Today is forecast {value} warmer than this date last year.",
+        historyCooler: "Today is forecast {value} cooler than this date last year.",
+        historySimilar: "Temperature is similar to this date last year.",
+        historyRain: "Last year: {temperature}, {rain} precipitation.",
+        historyUnavailable: "Historical comparison unavailable.",
+        notificationsOn: "Rain notifications enabled while the app is open.",
+        notificationsDenied: "Notification permission was not granted.",
+        rainNotificationTitle: "Rain approaching {name}",
+        rainNotificationBody: "Rain is expected in about {minutes} minutes.",
+        everyday: "everyday plans",
+        walking: "a walk",
+        cycling: "cycling",
+        running: "a run",
+        garden: "gardening",
+        photo: "photography"
+        ,modulesTitle: "Dashboard content",
+        moduleCurrent: "Current weather",
+        moduleOverview: "Today's overview",
+        moduleRecommendation: "Recommendations",
+        moduleSignals: "Weather signals"
     },
     de: {
         skipLink: "Zur Wettersuche springen",
@@ -236,7 +344,7 @@ const translations = {
         precipitationChartTitle: "Regenrisiko",
         windChartTitle: "Wind",
         uvChartTitle: "UV",
-        dailyTitle: "7-Tage-Vorhersage",
+        dailyTitle: "Nächste 7 Tage",
         glanceTitle: "Heute auf einen Blick",
         alertsTitle: "Wetterhinweise",
         highLabel: "Max",
@@ -289,17 +397,104 @@ const translations = {
         yourLocation: "Dein Standort",
         mixedWeather: "Wechselhaft",
         feelsPrefix: "Gefühlt"
+        ,activityLabel: "Aktivität",
+        activityGeneral: "Alltag",
+        activityWalking: "Spaziergang",
+        activityCycling: "Fahrrad",
+        activityRunning: "Laufen",
+        activityGarden: "Garten",
+        activityPhoto: "Fotografie",
+        rainNotificationsLabel: "Regenhinweise",
+        rainNotificationsHint: "Solange die App geöffnet ist",
+        nowcastKicker: "Nächste 3 Stunden",
+        nowcastTitle: "Regen-Nowcast",
+        modelForecast: "Modellprognose",
+        nowcastNote: "15-Minuten-Prognose; keine gemessenen Radardaten.",
+        rainMapKicker: "Rund um deinen Ort",
+        rainMapTitle: "Lokale Regenkarte",
+        rainMapNote: "Prognoseraster, keine Radarmessung.",
+        dryLabel: "Trocken",
+        heavyLabel: "Stark",
+        dailyBriefingKicker: "Persönliches Briefing",
+        dailyBriefingTitle: "Dein bestes Wetterfenster",
+        confidenceKicker: "Prognosesignal",
+        confidenceTitle: "Sicherheit & Änderungen",
+        sunKicker: "Tageslicht",
+        sunTitle: "Sonnenfenster",
+        stormKicker: "Konvektion",
+        stormTitle: "Gewitterpotenzial",
+        airKicker: "Luft & Pollen",
+        airTitle: "Bedingungen draußen",
+        historyKicker: "Vor einem Jahr",
+        historyTitle: "Historischer Vergleich",
+        dataBy: "Wetterdaten von",
+        rainStarts: "Regen wahrscheinlich in etwa {minutes} Min., für ungefähr {duration}.",
+        rainNow: "Jetzt wird für ungefähr {duration} Regen erwartet.",
+        noRainSoon: "In den nächsten drei Stunden wird kein nennenswerter Regen erwartet.",
+        rainTotal: "insgesamt {amount}",
+        mapAt: "Prognose für {time}",
+        bestWindow: "Bestes Fenster für {activity}: {start}–{end} Uhr.",
+        noGoodWindow: "Heute gibt es kein ideales Fenster; die ruhigste Phase beginnt gegen {time} Uhr.",
+        conditionsGood: "Gute Bedingungen",
+        takeJacket: "Jacke mitnehmen",
+        sunProtection: "Sonnenschutz",
+        rainProtection: "Regenschutz",
+        breezy: "Windig",
+        confidenceHigh: "Hohe Sicherheit",
+        confidenceMedium: "Mittlere Sicherheit",
+        confidenceLow: "Geringe Sicherheit",
+        confidenceDetail: "Abgeleitet aus Regenwahrscheinlichkeit und kurzfristiger Stabilität.",
+        forecastWarmer: "Prognose ist {value} wärmer als beim letzten Abruf.",
+        forecastCooler: "Prognose ist {value} kälter als beim letzten Abruf.",
+        forecastWetter: "Regenerwartung ist um {value} gestiegen.",
+        forecastStable: "Keine nennenswerte Änderung seit dem letzten Abruf.",
+        firstLoadChange: "Änderungen erscheinen nach dem nächsten Vorhersageabruf.",
+        sunWindow: "Klarste Phase: {start}–{end} Uhr.",
+        sunUnavailable: "Heute gibt es kein klares Sonnenfenster.",
+        stormLow: "Geringes Gewitterpotenzial.",
+        stormRaised: "Erhöhtes Potenzial gegen {time} Uhr (CAPE {cape}).",
+        stormHigh: "Hohes Gewitterpotenzial gegen {time} Uhr (CAPE {cape}).",
+        modelWarning: "Modellhinweis, keine amtliche Warnung.",
+        airGood: "Luftqualität ist gut",
+        airFair: "Luftqualität ist mäßig",
+        airPoor: "Luftqualität ist schlecht",
+        pollenLow: "Pollen niedrig",
+        pollenMedium: "Pollen mäßig",
+        pollenHigh: "Pollen hoch",
+        pollenUnavailable: "Keine Pollendaten",
+        airUnavailable: "Luftqualitätsdaten nicht verfügbar.",
+        historyWarmer: "Heute werden {value} mehr als an diesem Datum im Vorjahr erwartet.",
+        historyCooler: "Heute werden {value} weniger als an diesem Datum im Vorjahr erwartet.",
+        historySimilar: "Die Temperatur ähnelt diesem Datum im Vorjahr.",
+        historyRain: "Vorjahr: {temperature}, {rain} Niederschlag.",
+        historyUnavailable: "Historischer Vergleich nicht verfügbar.",
+        notificationsOn: "Regenhinweise sind aktiv, solange die App geöffnet ist.",
+        notificationsDenied: "Benachrichtigungen wurden nicht freigegeben.",
+        rainNotificationTitle: "Regen nähert sich {name}",
+        rainNotificationBody: "In ungefähr {minutes} Minuten wird Regen erwartet.",
+        everyday: "Alltagspläne",
+        walking: "einen Spaziergang",
+        cycling: "eine Fahrradtour",
+        running: "eine Laufrunde",
+        garden: "Gartenarbeit",
+        photo: "Fotografie"
+        ,modulesTitle: "Dashboard-Inhalte",
+        moduleCurrent: "Aktuelles Wetter",
+        moduleOverview: "Tagesüberblick",
+        moduleRecommendation: "Empfehlungen",
+        moduleSignals: "Wettersignale"
     }
 };
 
 const isServiceWorkerAvailable = "serviceWorker" in navigator && window.isSecureContext;
-const hourlyForecastCount = 12;
+const hourlyForecastCount = 24;
 const weatherCacheKey = "julianverse-weather:last-weather";
 const lastLocationKey = "julianverse-weather:last-location";
 const settingsKey = "julianverse-weather:settings";
 const savedLocationsKey = "julianverse-weather:saved-locations";
 const pinnedLocationKey = "julianverse-weather:pinned-location";
 const installDismissedKey = "julianverse-weather:install-dismissed";
+const notificationKey = "julianverse-weather:rain-notifications";
 const persistentDatabaseName = "julianverse-weather";
 const persistentStoreName = "app-state";
 const persistentKeys = [weatherCacheKey, lastLocationKey, settingsKey, savedLocationsKey, pinnedLocationKey];
@@ -322,6 +517,9 @@ let shouldSaveUrlLocation = false;
 let shouldPinUrlLocation = false;
 let persistentDatabasePromise = null;
 let startupUsedFallbackLocation = false;
+let previousWeatherData = null;
+let activeRainMapFrame = 0;
+let rainNotificationTimer = null;
 
 const wait = (milliseconds) => new Promise((resolve) => {
     window.setTimeout(resolve, milliseconds);
@@ -665,6 +863,19 @@ function getDefaultSettings() {
         theme: "light",
         layout: "expanded",
         units: "metric",
+        activity: "general",
+        rainNotifications: false,
+        modules: {
+            current: true,
+            overview: true,
+            nowcast: true,
+            rainMap: true,
+            recommendation: true,
+            signals: true,
+            hourly: true,
+            charts: true,
+            daily: true
+        },
         charts: {
             temperature: true,
             precipitation: true,
@@ -675,9 +886,13 @@ function getDefaultSettings() {
 }
 
 function readSettings() {
+    const savedSettings = readJson(settingsKey, {});
+    const defaults = getDefaultSettings();
     return {
-        ...getDefaultSettings(),
-        ...readJson(settingsKey, {})
+        ...defaults,
+        ...savedSettings,
+        charts: { ...defaults.charts, ...savedSettings.charts },
+        modules: { ...defaults.modules, ...savedSettings.modules }
     };
 }
 
@@ -752,9 +967,15 @@ function applyTranslations() {
     themeSelect.value = currentSettings.theme;
     layoutSelect.value = currentSettings.layout;
     unitsSelect.value = currentSettings.units;
+    activitySelect.value = currentSettings.activity || "general";
+    rainNotificationsToggle.checked = Boolean(currentSettings.rainNotifications);
 
     chartToggleElements.forEach((toggle) => {
         toggle.checked = currentSettings.charts?.[toggle.value] !== false;
+    });
+
+    moduleToggleElements.forEach((toggle) => {
+        toggle.checked = currentSettings.modules?.[toggle.value] !== false;
     });
 }
 
@@ -762,6 +983,7 @@ function applySettings() {
     document.body.dataset.theme = currentSettings.theme;
     document.body.dataset.layout = currentSettings.layout;
     applyTranslations();
+    updateModuleVisibility();
 }
 
 function renderSavedLocations() {
@@ -1034,11 +1256,84 @@ async function fetchWeather(location) {
     url.searchParams.set("longitude", location.longitude);
     url.searchParams.set("timezone", location.timezone);
     url.searchParams.set("current", "temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m,wind_direction_10m,pressure_msl,cloud_cover,is_day");
-    url.searchParams.set("hourly", "temperature_2m,weather_code,precipitation_probability,precipitation,wind_speed_10m,wind_direction_10m,visibility,is_day");
-    url.searchParams.set("daily", "weather_code,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max,wind_direction_10m_dominant,uv_index_max,sunrise,sunset");
-    url.searchParams.set("forecast_days", "7");
+    url.searchParams.set("minutely_15", "precipitation,weather_code");
+    url.searchParams.set("hourly", "temperature_2m,apparent_temperature,weather_code,precipitation_probability,precipitation,wind_speed_10m,wind_direction_10m,cloud_cover,visibility,cape,uv_index,is_day");
+    url.searchParams.set("daily", "weather_code,temperature_2m_max,temperature_2m_min,temperature_2m_mean,apparent_temperature_max,apparent_temperature_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max,wind_direction_10m_dominant,uv_index_max,sunrise,sunset,daylight_duration,sunshine_duration");
+    url.searchParams.set("forecast_minutely_15", "16");
+    url.searchParams.set("forecast_days", "8");
 
     return fetchJson(url);
+}
+
+async function fetchAirQuality(location) {
+    const url = new URL("https://air-quality-api.open-meteo.com/v1/air-quality");
+    url.searchParams.set("latitude", location.latitude);
+    url.searchParams.set("longitude", location.longitude);
+    url.searchParams.set("timezone", location.timezone);
+    url.searchParams.set("current", "european_aqi,pm2_5,ozone,uv_index,alder_pollen,birch_pollen,grass_pollen,mugwort_pollen,ragweed_pollen");
+
+    return fetchJson(url);
+}
+
+async function fetchHistoricalComparison(location) {
+    const comparisonDate = new Date();
+    comparisonDate.setFullYear(comparisonDate.getFullYear() - 1);
+    const date = comparisonDate.toISOString().slice(0, 10);
+    const url = new URL("https://archive-api.open-meteo.com/v1/archive");
+    url.searchParams.set("latitude", location.latitude);
+    url.searchParams.set("longitude", location.longitude);
+    url.searchParams.set("timezone", location.timezone);
+    url.searchParams.set("start_date", date);
+    url.searchParams.set("end_date", date);
+    url.searchParams.set("daily", "temperature_2m_mean,temperature_2m_max,temperature_2m_min,precipitation_sum");
+
+    return fetchJson(url);
+}
+
+async function fetchRainMap(location) {
+    const size = 5;
+    const latitudeStep = 0.09;
+    const longitudeStep = latitudeStep / Math.max(Math.cos(location.latitude * Math.PI / 180), 0.35);
+    const points = [];
+
+    for (let row = 0; row < size; row += 1) {
+        for (let column = 0; column < size; column += 1) {
+            points.push({
+                latitude: location.latitude + (2 - row) * latitudeStep,
+                longitude: location.longitude + (column - 2) * longitudeStep
+            });
+        }
+    }
+
+    const url = new URL("https://api.open-meteo.com/v1/forecast");
+    url.searchParams.set("latitude", points.map((point) => point.latitude.toFixed(4)).join(","));
+    url.searchParams.set("longitude", points.map((point) => point.longitude.toFixed(4)).join(","));
+    url.searchParams.set("timezone", location.timezone);
+    url.searchParams.set("minutely_15", "precipitation");
+    url.searchParams.set("forecast_minutely_15", "8");
+
+    const data = await fetchJson(url);
+    return Array.isArray(data) ? data : [data];
+}
+
+async function fetchWeatherBundle(location) {
+    const [weatherResult, airResult, historyResult, mapResult] = await Promise.allSettled([
+        fetchWeather(location),
+        fetchAirQuality(location),
+        fetchHistoricalComparison(location),
+        fetchRainMap(location)
+    ]);
+
+    if (weatherResult.status !== "fulfilled") {
+        throw weatherResult.reason;
+    }
+
+    return {
+        ...weatherResult.value,
+        airQuality: airResult.status === "fulfilled" ? airResult.value : null,
+        history: historyResult.status === "fulfilled" ? historyResult.value : null,
+        rainMap: mapResult.status === "fulfilled" ? mapResult.value : null
+    };
 }
 
 function getUpcomingHourlyForecast(hourly, currentTime) {
@@ -1058,6 +1353,9 @@ function getUpcomingHourlyForecast(hourly, currentTime) {
                 precipitationAmount: hourly.precipitation[sourceIndex],
                 wind: hourly.wind_speed_10m[sourceIndex],
                 windDirection: hourly.wind_direction_10m[sourceIndex],
+                cloud: hourly.cloud_cover?.[sourceIndex],
+                cape: hourly.cape?.[sourceIndex],
+                uv: hourly.uv_index?.[sourceIndex],
                 visibility: hourly.visibility[sourceIndex],
                 isDay: Boolean(hourly.is_day[sourceIndex])
             };
@@ -1181,6 +1479,18 @@ function updateChartVisibility() {
     });
 }
 
+function updateModuleVisibility() {
+    document.querySelectorAll("[data-dashboard-module]").forEach((element) => {
+        const moduleName = element.dataset.dashboardModule;
+        element.classList.toggle("hidden", currentSettings.modules?.[moduleName] === false);
+    });
+
+    const nowcastVisible = currentSettings.modules?.nowcast !== false;
+    const rainMapVisible = currentSettings.modules?.rainMap !== false;
+    intelligenceGridElement.classList.toggle("hidden", !nowcastVisible && !rainMapVisible);
+    intelligenceGridElement.classList.toggle("single-module", nowcastVisible !== rainMapVisible);
+}
+
 function scrollHourly(direction) {
     const scrollAmount = Math.max(180, hourlyForecastElement.clientWidth * 0.75);
 
@@ -1233,6 +1543,282 @@ function renderAlerts(current, daily) {
         : `<p class="empty-state">${t("noAlerts")}</p>`;
 }
 
+function formatDuration(minutes) {
+    if (minutes < 60) {
+        return `${minutes} min`;
+    }
+
+    const hours = Math.floor(minutes / 60);
+    const remainder = minutes % 60;
+    return remainder ? `${hours} h ${remainder} min` : `${hours} h`;
+}
+
+function getNowcast(data) {
+    const minutely = data.minutely_15;
+
+    if (!minutely?.time?.length || !minutely.precipitation) {
+        return { periods: [], wetIndex: -1, duration: 0, total: 0 };
+    }
+
+    const periods = minutely.time.slice(0, 12).map((time, index) => ({
+        time,
+        amount: Number(minutely.precipitation[index]) || 0,
+        code: minutely.weather_code?.[index]
+    }));
+    const wetIndex = periods.findIndex((period) => period.amount >= 0.1);
+    let wetSteps = 0;
+
+    if (wetIndex >= 0) {
+        for (let index = wetIndex; index < periods.length && periods[index].amount >= 0.05; index += 1) {
+            wetSteps += 1;
+        }
+    }
+
+    return {
+        periods,
+        wetIndex,
+        duration: wetSteps * 15,
+        total: periods.reduce((sum, period) => sum + period.amount, 0)
+    };
+}
+
+function renderNowcast(data) {
+    const nowcast = getNowcast(data);
+
+    if (nowcast.wetIndex < 0) {
+        setText(nowcastSummaryElement, t("noRainSoon"));
+    } else {
+        const minutes = nowcast.wetIndex * 15;
+        const message = minutes === 0
+            ? t("rainNow", { duration: formatDuration(nowcast.duration) })
+            : t("rainStarts", { minutes, duration: formatDuration(nowcast.duration) });
+        setText(nowcastSummaryElement, `${message} · ${t("rainTotal", { amount: formatPrecipitation(nowcast.total) })}`);
+    }
+
+    const maxAmount = Math.max(0.4, ...nowcast.periods.map((period) => period.amount));
+    rainTimelineElement.innerHTML = nowcast.periods.map((period, index) => {
+        const height = Math.max(4, Math.round(period.amount / maxAmount * 100));
+        const label = `${formatDate(period.time, { hour: "2-digit", minute: "2-digit" })}: ${formatPrecipitation(period.amount)}`;
+        return `
+            <div class="rain-step" title="${label}" aria-label="${label}">
+                <span class="rain-bar" style="--rain-height:${height}%"></span>
+                <time>${index % 2 === 0 ? formatDate(period.time, { hour: "2-digit", minute: "2-digit" }) : ""}</time>
+            </div>
+        `;
+    }).join("");
+
+    scheduleRainNotification(nowcast);
+}
+
+function renderRainMapFrame(rainMap, frameIndex) {
+    if (!rainMap?.length || !rainMap[0]?.minutely_15?.time) {
+        rainMapElement.innerHTML = `<p class="empty-state">${t("serviceUnavailable")}</p>`;
+        rainMapControlsElement.replaceChildren();
+        return;
+    }
+
+    const maxFrame = rainMap[0].minutely_15.time.length - 1;
+    activeRainMapFrame = Math.min(Math.max(frameIndex, 0), maxFrame);
+    const time = rainMap[0].minutely_15.time[activeRainMapFrame];
+    const cells = rainMap.slice(0, 25).map((point, index) => {
+        const amount = Number(point.minutely_15?.precipitation?.[activeRainMapFrame]) || 0;
+        const opacity = Math.min(0.92, 0.08 + amount / 4 * 0.84);
+        const center = index === 12 ? `<span class="location-dot" aria-hidden="true"></span>` : "";
+        return `<span class="rain-map-cell" style="background:rgba(62, 97, 255, ${opacity.toFixed(2)})" title="${formatPrecipitation(amount)}">${center}</span>`;
+    });
+
+    rainMapElement.innerHTML = `<span class="map-north" aria-hidden="true">N</span>${cells.join("")}`;
+    setText(rainMapCaptionElement, `${t("mapAt", { time: formatDate(time, { hour: "2-digit", minute: "2-digit" }) })} · ${t("rainMapNote")}`);
+    rainMapControlsElement.querySelectorAll("button").forEach((button) => {
+        button.setAttribute("aria-pressed", String(Number(button.dataset.mapFrame) === activeRainMapFrame));
+    });
+}
+
+function renderRainMap(rainMap) {
+    if (!rainMap?.length || !rainMap[0]?.minutely_15?.time) {
+        renderRainMapFrame(null, 0);
+        return;
+    }
+
+    const availableFrames = rainMap[0].minutely_15.time.length;
+    const frames = [0, 2, 4, 7].filter((index) => index < availableFrames);
+    rainMapControlsElement.innerHTML = frames.map((index) => {
+        const label = index === 0 ? "Now" : `+${index * 15}m`;
+        return `<button type="button" class="map-time-button" data-map-frame="${index}" aria-pressed="${index === 0}">${label}</button>`;
+    }).join("");
+    renderRainMapFrame(rainMap, 0);
+}
+
+function scoreActivityHour(hour, activity) {
+    const targetTemperature = activity === "running" ? 12 : activity === "cycling" ? 18 : 20;
+    const temperaturePenalty = Math.abs((hour.temperature ?? targetTemperature) - targetTemperature) * 1.6;
+    const windPenalty = (hour.wind ?? 0) * (activity === "cycling" ? 1.4 : 0.45);
+    const rainPenalty = (hour.precipitation ?? 0) * 0.7 + (hour.precipitationAmount ?? 0) * 30;
+    const uvPenalty = activity === "photo" ? 0 : Math.max(0, (hour.uv ?? 0) - 5) * 8;
+    const cloudPreference = activity === "photo" ? Math.abs((hour.cloud ?? 50) - 45) * 0.15 : 0;
+    return temperaturePenalty + windPenalty + rainPenalty + uvPenalty + cloudPreference;
+}
+
+function renderRecommendation(hourly, currentTime) {
+    const hours = getUpcomingHourlyForecast(hourly, currentTime).slice(0, 12);
+    const activity = currentSettings.activity || "general";
+    const candidates = hours.slice(0, -1).map((hour, index) => ({
+        hour,
+        next: hours[index + 1],
+        score: (scoreActivityHour(hour, activity) + scoreActivityHour(hours[index + 1], activity)) / 2
+    })).sort((a, b) => a.score - b.score);
+    const best = candidates[0];
+
+    if (!best) {
+        setText(recommendationSummaryElement, t("steady"));
+        recommendationChipsElement.replaceChildren();
+        return;
+    }
+
+    const start = formatDate(best.hour.time, { hour: "2-digit", minute: "2-digit" });
+    const endDate = new Date(best.next.time);
+    endDate.setHours(endDate.getHours() + 1);
+    const end = formatDate(endDate, { hour: "2-digit", minute: "2-digit" });
+    const activityName = t(activity === "general" ? "everyday" : activity);
+    setText(recommendationSummaryElement, best.score < 70
+        ? t("bestWindow", { activity: activityName, start, end })
+        : t("noGoodWindow", { time: start }));
+
+    const chips = [t("conditionsGood")];
+    if (best.hour.temperature < 12) chips.push(t("takeJacket"));
+    if ((best.hour.uv ?? 0) >= 5) chips.push(t("sunProtection"));
+    if (best.hour.precipitation >= 35) chips.push(t("rainProtection"));
+    if (best.hour.wind >= 25) chips.push(t("breezy"));
+    recommendationChipsElement.innerHTML = chips.map((chip) => `<span>${chip}</span>`).join("");
+}
+
+function renderConfidence(data) {
+    const probability = Number(data.daily.precipitation_probability_max?.[0]) || 0;
+    const distanceFromUncertain = Math.abs(probability - 50);
+    const confidenceKey = distanceFromUncertain >= 35 ? "confidenceHigh" : distanceFromUncertain >= 18 ? "confidenceMedium" : "confidenceLow";
+    let changeMessage = t("firstLoadChange");
+
+    if (previousWeatherData?.daily) {
+        const temperatureChange = Number(data.daily.temperature_2m_max[0]) - Number(previousWeatherData.daily.temperature_2m_max?.[0]);
+        const rainChange = Number(data.daily.precipitation_sum[0]) - Number(previousWeatherData.daily.precipitation_sum?.[0]);
+        if (Math.abs(temperatureChange) >= 1) {
+            changeMessage = t(temperatureChange > 0 ? "forecastWarmer" : "forecastCooler", { value: formatTemperature(Math.abs(temperatureChange)) });
+        } else if (rainChange >= 1) {
+            changeMessage = t("forecastWetter", { value: formatPrecipitation(rainChange) });
+        } else {
+            changeMessage = t("forecastStable");
+        }
+    }
+
+    confidenceContentElement.innerHTML = `<p class="signal-value">${t(confidenceKey)}</p><p>${changeMessage}</p><small>${t("confidenceDetail")}</small>`;
+}
+
+function findBestSunWindow(hourly, currentTime) {
+    const hours = getUpcomingHourlyForecast(hourly, currentTime).filter((hour) => hour.isDay);
+    const suitable = hours.map((hour) => (hour.cloud ?? 100) <= 45 && hour.precipitation < 35);
+    let bestStart = -1;
+    let bestLength = 0;
+    let currentStart = -1;
+
+    suitable.forEach((isSuitable, index) => {
+        if (isSuitable && currentStart < 0) currentStart = index;
+        if ((!isSuitable || index === suitable.length - 1) && currentStart >= 0) {
+            const endIndex = isSuitable && index === suitable.length - 1 ? index + 1 : index;
+            const length = endIndex - currentStart;
+            if (length > bestLength) {
+                bestStart = currentStart;
+                bestLength = length;
+            }
+            currentStart = -1;
+        }
+    });
+
+    return bestStart >= 0 ? hours.slice(bestStart, bestStart + bestLength) : [];
+}
+
+function renderSignals(data) {
+    const sunWindow = findBestSunWindow(data.hourly, data.current.time);
+    if (sunWindow.length) {
+        const end = new Date(sunWindow[sunWindow.length - 1].time);
+        end.setHours(end.getHours() + 1);
+        const daylightMinutes = hasNumber(data.daily.daylight_duration?.[0])
+            ? Math.round(data.daily.daylight_duration[0] / 60)
+            : null;
+        sunContentElement.innerHTML = `<p class="signal-value">${t("sunWindow", {
+            start: formatDate(sunWindow[0].time, { hour: "2-digit", minute: "2-digit" }),
+            end: formatDate(end, { hour: "2-digit", minute: "2-digit" })
+        })}</p>${daylightMinutes ? `<p>${formatDuration(daylightMinutes)} ${t("sunKicker").toLowerCase()}</p>` : ""}`;
+    } else {
+        sunContentElement.innerHTML = `<p class="signal-value">${t("sunUnavailable")}</p>`;
+    }
+
+    const upcoming = getUpcomingHourlyForecast(data.hourly, data.current.time);
+    const stormHour = upcoming.reduce((strongest, hour) => (hour.cape ?? 0) > (strongest?.cape ?? 0) ? hour : strongest, null);
+    const cape = Math.round(stormHour?.cape ?? 0);
+    const stormKey = cape >= 1200 ? "stormHigh" : cape >= 500 ? "stormRaised" : "stormLow";
+    const stormText = stormKey === "stormLow" ? t(stormKey) : t(stormKey, {
+        time: formatDate(stormHour.time, { hour: "2-digit", minute: "2-digit" }), cape
+    });
+    stormContentElement.innerHTML = `<p class="signal-value">${stormText}</p><small>${t("modelWarning")}</small>`;
+
+    renderAirQuality(data.airQuality);
+    renderHistory(data);
+}
+
+function renderAirQuality(airQuality) {
+    const current = airQuality?.current;
+    if (!current) {
+        airContentElement.innerHTML = `<p>${t("airUnavailable")}</p>`;
+        return;
+    }
+
+    const aqi = Number(current.european_aqi);
+    const airKey = aqi <= 40 ? "airGood" : aqi <= 80 ? "airFair" : "airPoor";
+    const pollens = ["alder_pollen", "birch_pollen", "grass_pollen", "mugwort_pollen", "ragweed_pollen"]
+        .map((key) => Number(current[key]))
+        .filter(Number.isFinite);
+    const maxPollen = pollens.length ? Math.max(...pollens) : null;
+    const pollenKey = maxPollen === null ? "pollenUnavailable" : maxPollen < 10 ? "pollenLow" : maxPollen < 50 ? "pollenMedium" : "pollenHigh";
+    airContentElement.innerHTML = `<p class="signal-value">${t(airKey)} · ${Math.round(aqi)} AQI</p><p>${t(pollenKey)}</p><small>PM2.5 ${hasNumber(current.pm2_5) ? `${Math.round(current.pm2_5)} µg/m³` : "–"} · O₃ ${hasNumber(current.ozone) ? `${Math.round(current.ozone)} µg/m³` : "–"}</small>`;
+}
+
+function renderHistory(data) {
+    const history = data.history?.daily;
+    const historicMean = Number(history?.temperature_2m_mean?.[0]);
+    const todayMean = Number(data.daily.temperature_2m_mean?.[0]);
+
+    if (!Number.isFinite(historicMean) || !Number.isFinite(todayMean)) {
+        historyContentElement.innerHTML = `<p>${t("historyUnavailable")}</p>`;
+        return;
+    }
+
+    const difference = todayMean - historicMean;
+    const comparisonKey = Math.abs(difference) < 1 ? "historySimilar" : difference > 0 ? "historyWarmer" : "historyCooler";
+    const comparison = comparisonKey === "historySimilar" ? t(comparisonKey) : t(comparisonKey, { value: formatTemperature(Math.abs(difference)) });
+    historyContentElement.innerHTML = `<p class="signal-value">${comparison}</p><p>${t("historyRain", {
+        temperature: formatTemperature(historicMean),
+        rain: formatPrecipitation(history.precipitation_sum?.[0])
+    })}</p>`;
+}
+
+function scheduleRainNotification(nowcast) {
+    window.clearTimeout(rainNotificationTimer);
+    rainNotificationTimer = null;
+
+    if (!currentSettings.rainNotifications || !("Notification" in window) || Notification.permission !== "granted" || nowcast.wetIndex < 1 || nowcast.wetIndex > 4) {
+        return;
+    }
+
+    const minutes = nowcast.wetIndex * 15;
+    rainNotificationTimer = window.setTimeout(() => {
+        new Notification(t("rainNotificationTitle", { name: currentLocation?.name || "" }), {
+            body: t("rainNotificationBody", { minutes: 5 }),
+            icon: "icons/icon-192.png",
+            tag: "julianverse-rain"
+        });
+    }, Math.max(1000, (minutes - 5) * 60 * 1000));
+}
+
 function renderWeather(location, data) {
     const current = data.current;
     const hourly = data.hourly;
@@ -1253,7 +1839,7 @@ function renderWeather(location, data) {
     setText(windElement, formatWind(current.wind_speed_10m));
     setText(windDirectionElement, formatWindDirection(current.wind_direction_10m));
     setText(humidityElement, formatPercent(current.relative_humidity_2m));
-    setHtml(apparentElement, `${Math.round(current.apparent_temperature)}&deg;`);
+    setText(apparentElement, formatTemperature(current.apparent_temperature));
     setText(pressureElement, formatPressure(current.pressure_msl));
     setText(cloudsElement, formatPercent(current.cloud_cover));
     setText(visibilityElement, formatVisibility(upcomingHours[0]?.visibility));
@@ -1265,6 +1851,11 @@ function renderWeather(location, data) {
     }));
     renderGlance(current, daily, upcomingHours);
     renderAlerts(current, daily);
+    renderNowcast(data);
+    renderRainMap(data.rainMap);
+    renderRecommendation(hourly, current.time);
+    renderConfidence(data);
+    renderSignals(data);
 
     hourlyForecastElement.innerHTML = upcomingHours.map((hour) => `
         <article class="panel hour">
@@ -1297,9 +1888,11 @@ function renderWeather(location, data) {
     renderUvChart(daily);
     updateChartVisibility();
 
-    forecastElement.innerHTML = daily.time.map((day, index) => `
+    forecastElement.innerHTML = daily.time.slice(1, 8).map((day, offset) => {
+        const index = offset + 1;
+        return `
         <article class="panel day">
-            <details ${index === 0 ? "open" : ""}>
+            <details ${offset === 0 ? "open" : ""}>
                 <summary>
                     <span class="weather-icon" aria-hidden="true">${getWeatherIcon(daily.weather_code[index])}</span>
                     <span>
@@ -1342,7 +1935,8 @@ function renderWeather(location, data) {
                 </dl>
             </details>
         </article>
-    `).join("");
+    `;
+    }).join("");
 
     weatherElement.classList.remove("hidden");
 }
@@ -1378,7 +1972,13 @@ async function loadLocation(location) {
     setStatus(t("loadingWeather", { name: location.name }));
 
     try {
-        const data = await fetchWeather(location);
+        const cachedBeforeUpdate = readCachedWeatherSync();
+        previousWeatherData = cachedBeforeUpdate
+            && Math.abs(cachedBeforeUpdate.location.latitude - location.latitude) < 0.001
+            && Math.abs(cachedBeforeUpdate.location.longitude - location.longitude) < 0.001
+            ? cachedBeforeUpdate.data
+            : null;
+        const data = await fetchWeatherBundle(location);
         renderWeather(location, data);
         cacheWeather(location, data);
 
@@ -1548,11 +2148,57 @@ unitsSelect.addEventListener("change", () => {
     updateSettings({ units: unitsSelect.value });
 });
 
+activitySelect.addEventListener("change", () => {
+    updateSettings({ activity: activitySelect.value });
+});
+
+rainNotificationsToggle.addEventListener("change", async () => {
+    if (!rainNotificationsToggle.checked) {
+        updateSettings({ rainNotifications: false });
+        window.clearTimeout(rainNotificationTimer);
+        return;
+    }
+
+    if (!("Notification" in window)) {
+        rainNotificationsToggle.checked = false;
+        setStatus(t("notificationsDenied"), true);
+        return;
+    }
+
+    const permission = Notification.permission === "granted" ? "granted" : await Notification.requestPermission();
+    if (permission !== "granted") {
+        rainNotificationsToggle.checked = false;
+        setStatus(t("notificationsDenied"), true);
+        return;
+    }
+
+    updateSettings({ rainNotifications: true });
+    setStatus(t("notificationsOn"));
+});
+
+rainMapControlsElement.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-map-frame]");
+    if (button && currentWeatherData?.rainMap) {
+        renderRainMapFrame(currentWeatherData.rainMap, Number(button.dataset.mapFrame));
+    }
+});
+
 chartToggleElements.forEach((toggle) => {
     toggle.addEventListener("change", () => {
         updateSettings({
             charts: {
                 ...currentSettings.charts,
+                [toggle.value]: toggle.checked
+            }
+        });
+    });
+});
+
+moduleToggleElements.forEach((toggle) => {
+    toggle.addEventListener("change", () => {
+        updateSettings({
+            modules: {
+                ...currentSettings.modules,
                 [toggle.value]: toggle.checked
             }
         });

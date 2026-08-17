@@ -25,3 +25,19 @@ Settings Menu with the points above:
 5. Internationalization: Start with English and German, then add more languages. (Done)
 6. Visuals: Temperature and precipitation charts. (Done)
 7. Advanced Features: Weather alerts (Done) and mobile widget research.
+
+## Weather Intelligence (Done)
+
+- 15-minute rain nowcast with start, duration, amount, and optional local notification.
+- Animated local precipitation forecast grid, explicitly distinguished from measured radar.
+- Activity-aware best-weather windows and practical recommendations.
+- Forecast confidence and changes compared with the previous refresh.
+- Sunshine window and model-derived thunderstorm potential.
+- Air quality, particulate matter, ozone, and seasonal pollen.
+- Same-date historical comparison.
+- PWA shortcuts for quick location access.
+
+## Future External Integrations
+
+- True measured radar tiles require a separate radar data provider and careful licence, caching, and attribution work.
+- Reliable background push notifications require an opt-in server-side push service.
