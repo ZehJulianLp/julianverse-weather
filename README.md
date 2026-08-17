@@ -14,7 +14,14 @@ Live app: <https://julianverse.de/weather/>
 - Save places locally and switch between them from the sidebar.
 - Pin a default place, delete saved places, and reorder them with buttons or drag and drop.
 - Choose English or German, light or dark theme, compact or expanded layout, and metric or imperial units.
+- Show or hide individual dashboard modules, with preferences stored locally.
 - Show derived weather alerts, a today-at-a-glance summary, and stale offline data indicators.
+- Show a 15-minute rain nowcast and an animated 5×5 local precipitation forecast map. These are model forecasts, not measured radar images.
+- Suggest the best two-hour window for everyday plans, walking, cycling, running, gardening, or photography.
+- Summarize forecast confidence, changes since the previous refresh, sunny windows, and thunderstorm potential.
+- Show current European air quality, particulate matter, ozone, and seasonal pollen data when available.
+- Compare today's predicted mean temperature with the same date one year ago.
+- Optionally schedule a local rain notification while the app remains open.
 - Install as a basic PWA on supported browsers.
 - Cache the app shell for repeat visits.
 - No API key required.
@@ -32,6 +39,14 @@ python3 -m http.server 8080
 Then open `http://localhost:8080`.
 
 Geolocation requires browser permission and may require a secure context outside localhost.
+
+Rain notifications require browser permission and a secure context. They are scheduled locally and only while the app is open; the app has no push server or background tracking.
+
+## Data Sources and Limits
+
+Forecast, air-quality, pollen, and historical data come from Open-Meteo under CC BY 4.0. The local rain map samples a compact grid around the selected location in one batched request. It visualizes numerical model output and must not be interpreted as measured weather radar or an official warning.
+
+The free Open-Meteo endpoint is intended for non-commercial use and is rate-limited. See the Open-Meteo terms before commercial deployment.
 
 ## URL Parameters
 

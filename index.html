@@ -70,12 +70,42 @@
                         <option value="imperial" data-i18n="unitsImperial">Imperial</option>
                     </select>
                 </label>
+                <label class="field-label" for="activity-select">
+                    <span data-i18n="activityLabel">Activity</span>
+                    <select id="activity-select">
+                        <option value="general" data-i18n="activityGeneral">Everyday</option>
+                        <option value="walking" data-i18n="activityWalking">Walking</option>
+                        <option value="cycling" data-i18n="activityCycling">Cycling</option>
+                        <option value="running" data-i18n="activityRunning">Running</option>
+                        <option value="garden" data-i18n="activityGarden">Garden</option>
+                        <option value="photo" data-i18n="activityPhoto">Photography</option>
+                    </select>
+                </label>
+                <label class="notification-setting">
+                    <span>
+                        <strong data-i18n="rainNotificationsLabel">Rain notifications</strong>
+                        <small data-i18n="rainNotificationsHint">While the app is open</small>
+                    </span>
+                    <input type="checkbox" id="rain-notifications-toggle">
+                </label>
                 <fieldset class="field-label chart-settings">
                     <legend data-i18n="chartsTitle">Weather trends</legend>
                     <label><input type="checkbox" class="chart-toggle" value="temperature" checked> <span data-i18n="temperatureChartTitle">Temperature</span></label>
                     <label><input type="checkbox" class="chart-toggle" value="precipitation" checked> <span data-i18n="precipitationChartTitle">Rain chance</span></label>
                     <label><input type="checkbox" class="chart-toggle" value="wind" checked> <span data-i18n="windChartTitle">Wind</span></label>
                     <label><input type="checkbox" class="chart-toggle" value="uv" checked> <span data-i18n="uvChartTitle">UV</span></label>
+                </fieldset>
+                <fieldset class="field-label chart-settings module-settings">
+                    <legend data-i18n="modulesTitle">Dashboard content</legend>
+                    <label><input type="checkbox" class="module-toggle" value="current" checked> <span data-i18n="moduleCurrent">Current weather</span></label>
+                    <label><input type="checkbox" class="module-toggle" value="overview" checked> <span data-i18n="moduleOverview">Today's overview</span></label>
+                    <label><input type="checkbox" class="module-toggle" value="nowcast" checked> <span data-i18n="nowcastTitle">Rain nowcast</span></label>
+                    <label><input type="checkbox" class="module-toggle" value="rainMap" checked> <span data-i18n="rainMapTitle">Local rain map</span></label>
+                    <label><input type="checkbox" class="module-toggle" value="recommendation" checked> <span data-i18n="moduleRecommendation">Recommendations</span></label>
+                    <label><input type="checkbox" class="module-toggle" value="signals" checked> <span data-i18n="moduleSignals">Weather signals</span></label>
+                    <label><input type="checkbox" class="module-toggle" value="hourly" checked> <span data-i18n="hourlyTitle">Next hours</span></label>
+                    <label><input type="checkbox" class="module-toggle" value="charts" checked> <span data-i18n="chartsTitle">Weather trends</span></label>
+                    <label><input type="checkbox" class="module-toggle" value="daily" checked> <span data-i18n="dailyTitle">Next 7 days</span></label>
                 </fieldset>
             </div>
         </section>
@@ -103,7 +133,81 @@
         </noscript>
 
         <section class="weather hidden" id="weather" aria-label="Weather results">
-            <section class="overview-grid" aria-label="Weather overview">
+            <section class="intelligence-grid" aria-label="Weather intelligence">
+                <article class="panel nowcast-card" data-dashboard-module="nowcast">
+                    <div class="card-heading">
+                        <div>
+                            <p class="kicker" data-i18n="nowcastKicker">Next 3 hours</p>
+                            <h2 data-i18n="nowcastTitle">Rain nowcast</h2>
+                        </div>
+                        <span class="model-badge" data-i18n="modelForecast">Model forecast</span>
+                    </div>
+                    <p class="feature-lead" id="nowcast-summary">–</p>
+                    <div class="rain-timeline" id="rain-timeline" aria-label="15-minute rain forecast"></div>
+                    <p class="data-note" data-i18n="nowcastNote">15-minute forecast; not measured radar data.</p>
+                </article>
+
+                <article class="panel rain-map-card" data-dashboard-module="rainMap">
+                    <div class="card-heading">
+                        <div>
+                            <p class="kicker" data-i18n="rainMapKicker">Around your location</p>
+                            <h2 data-i18n="rainMapTitle">Local rain map</h2>
+                        </div>
+                        <div class="map-controls" id="rain-map-controls" aria-label="Rain map time"></div>
+                    </div>
+                    <div class="rain-map-layout">
+                        <div class="rain-map" id="rain-map" role="img" aria-label="Local precipitation forecast map"></div>
+                        <div class="map-legend" aria-hidden="true">
+                            <span data-i18n="dryLabel">Dry</span><i></i><span data-i18n="heavyLabel">Heavy</span>
+                        </div>
+                    </div>
+                    <p class="data-note" id="rain-map-caption" data-i18n="rainMapNote">Forecast grid, not radar measurements.</p>
+                </article>
+            </section>
+
+            <article class="panel recommendation-card" data-dashboard-module="recommendation">
+                <div>
+                    <p class="kicker" data-i18n="dailyBriefingKicker">Personal briefing</p>
+                    <h2 data-i18n="dailyBriefingTitle">Your best weather window</h2>
+                </div>
+                <p class="feature-lead" id="recommendation-summary">–</p>
+                <div class="recommendation-chips" id="recommendation-chips"></div>
+            </article>
+
+            <section class="signal-grid" data-dashboard-module="signals" aria-label="Detailed weather signals">
+                <article class="panel signal-card">
+                    <p class="signal-icon" aria-hidden="true">◎</p>
+                    <p class="kicker" data-i18n="confidenceKicker">Forecast signal</p>
+                    <h2 data-i18n="confidenceTitle">Confidence & changes</h2>
+                    <div id="confidence-content"></div>
+                </article>
+                <article class="panel signal-card">
+                    <p class="signal-icon" aria-hidden="true">✦</p>
+                    <p class="kicker" data-i18n="sunKicker">Daylight</p>
+                    <h2 data-i18n="sunTitle">Sun window</h2>
+                    <div id="sun-content"></div>
+                </article>
+                <article class="panel signal-card">
+                    <p class="signal-icon" aria-hidden="true">ϟ</p>
+                    <p class="kicker" data-i18n="stormKicker">Convection</p>
+                    <h2 data-i18n="stormTitle">Thunderstorm potential</h2>
+                    <div id="storm-content"></div>
+                </article>
+                <article class="panel signal-card">
+                    <p class="signal-icon" aria-hidden="true">◌</p>
+                    <p class="kicker" data-i18n="airKicker">Air & pollen</p>
+                    <h2 data-i18n="airTitle">Outside conditions</h2>
+                    <div id="air-content"></div>
+                </article>
+                <article class="panel signal-card">
+                    <p class="signal-icon" aria-hidden="true">↺</p>
+                    <p class="kicker" data-i18n="historyKicker">A year ago</p>
+                    <h2 data-i18n="historyTitle">Historical comparison</h2>
+                    <div id="history-content"></div>
+                </article>
+            </section>
+
+            <section class="overview-grid" data-dashboard-module="overview" aria-label="Weather overview">
                 <article class="panel glance-card">
                     <h2 data-i18n="glanceTitle">Today at a glance</h2>
                     <div class="glance-list" id="glance-list"></div>
@@ -114,7 +218,7 @@
                 </article>
             </section>
 
-            <article class="panel current">
+            <article class="panel current" data-dashboard-module="current">
                 <div class="current-summary">
                     <span class="weather-icon current-icon" id="current-icon" aria-hidden="true">?</span>
                     <p class="place" id="place">-</p>
@@ -166,7 +270,7 @@
                 </div>
             </article>
 
-            <section class="forecast-section" aria-labelledby="hourly-title">
+            <section class="forecast-section" data-dashboard-module="hourly" aria-labelledby="hourly-title">
                 <h2 id="hourly-title" data-i18n="hourlyTitle">Next hours</h2>
                 <div class="hourly-shell">
                     <button class="scroll-button" type="button" id="hourly-prev" aria-label="Previous hours">←</button>
@@ -175,7 +279,7 @@
                 </div>
             </section>
 
-            <section class="forecast-section" aria-labelledby="charts-title">
+            <section class="forecast-section" data-dashboard-module="charts" aria-labelledby="charts-title">
                 <h2 id="charts-title" data-i18n="chartsTitle">Weather trends</h2>
                 <div class="charts">
                     <article class="panel chart-card" data-chart-card="temperature">
@@ -197,11 +301,14 @@
                 </div>
             </section>
 
-            <section class="forecast-section" aria-labelledby="daily-title">
-                <h2 id="daily-title" data-i18n="dailyTitle">7-day forecast</h2>
+            <section class="forecast-section" data-dashboard-module="daily" aria-labelledby="daily-title">
+                <h2 id="daily-title" data-i18n="dailyTitle">Next 7 days</h2>
                 <div class="forecast" id="forecast" aria-label="Seven day forecast"></div>
             </section>
         </section>
+        <footer class="site-footer">
+            <p><span data-i18n="dataBy">Weather data by</span> <a href="https://open-meteo.com/" rel="noopener">Open-Meteo</a> · <a href="https://creativecommons.org/licenses/by/4.0/" rel="noopener">CC BY 4.0</a></p>
+        </footer>
     </main>
 
 </body>
