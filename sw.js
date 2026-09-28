@@ -1,4 +1,4 @@
-const CACHE_NAME = "julianverse-weather-v36";
+const CACHE_NAME = "julianverse-weather-v37";
 const APP_SHELL = [
     "./",
     "./index.html",
@@ -10,6 +10,7 @@ const APP_SHELL = [
     "./account/panel.css",
     "./account/adapter.mjs",
     "./account/data.mjs",
+    "./account/session.mjs",
     "./account/sync.mjs",
     "./account/oidc-client.mjs",
     "./manifest.webmanifest",
@@ -50,6 +51,17 @@ self.addEventListener("fetch", (event) => {
 
     if (requestUrl.origin !== self.location.origin) {
         event.respondWith(fetch(event.request));
+        return;
+    }
+
+    // Display settings change the query string. All app navigations use the same
+    // cached shell; the app still reads the current URL and local data on startup.
+    const appUrl = new URL("./", self.registration.scope);
+    if (event.request.mode === "navigate" &&
+        [appUrl.pathname, `${appUrl.pathname}index.html`].includes(requestUrl.pathname)) {
+        event.respondWith(
+            caches.match(appUrl.href).then((cachedResponse) => cachedResponse || fetch(event.request))
+        );
         return;
     }
 

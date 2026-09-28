@@ -93,8 +93,10 @@ offline edits remain local until connectivity returns. Conflicts preserve both v
 and require an explicit choice. Local backups can be downloaded before resolving them.
 Cloud imports update both localStorage and IndexedDB.
 
-Tokens stay in memory and rotate while the app is open. **Reloading requires signing in
-and selecting categories again.** Signing out or stopping sync preserves local data.
+Sign-in and enabled categories survive reloads and browser restarts on this device.
+A Secure/HttpOnly Account cookie renews short-lived access tokens held only in memory.
+The session lasts up to 30 days, unless revoked earlier. Signing out and turning sync
+off are remembered too, and preserve local data.
 The app and its cached interface remain usable without an account.
 
 The plain browser modules in `account/` come from
@@ -115,3 +117,7 @@ JULIANVERSE_STARTPAGE_CHECKOUT=/path/to/startpage \
 This uses local HTTPS test servers and in-memory cloud files. Check sign-in, explicit
 upload/download, offline edits, conflicts, sign-out and narrow/desktop layouts when
 changing the integration. No build step or browser runtime dependency is required.
+
+Remembered sign-in requires the app and Account to share a site (as with
+`julianverse.de` and `account.julianverse.de`). Other hosts need a matching deployment;
+this integration does not depend on third-party cookies.
