@@ -1,4 +1,4 @@
-const CACHE_NAME = "julianverse-weather-v38";
+const CACHE_NAME = "julianverse-weather-v39";
 const APP_SHELL = [
     "./",
     "./index.html",
