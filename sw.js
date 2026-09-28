@@ -1,9 +1,17 @@
-const CACHE_NAME = "julianverse-weather-v35";
+const CACHE_NAME = "julianverse-weather-v36";
 const APP_SHELL = [
     "./",
     "./index.html",
     "./styles.css",
     "./script.js",
+    "./account/app.mjs",
+    "./account/config.mjs",
+    "./account/panel.mjs",
+    "./account/panel.css",
+    "./account/adapter.mjs",
+    "./account/data.mjs",
+    "./account/sync.mjs",
+    "./account/oidc-client.mjs",
     "./manifest.webmanifest",
     "./icons/icon-192.png",
     "./icons/icon-512.png",
@@ -21,7 +29,7 @@ self.addEventListener("activate", (event) => {
     event.waitUntil(
         caches.keys().then((cacheNames) => Promise.all(
             cacheNames
-                .filter((cacheName) => cacheName !== CACHE_NAME)
+                .filter((cacheName) => cacheName.startsWith("julianverse-weather-") && cacheName !== CACHE_NAME)
                 .map((cacheName) => caches.delete(cacheName))
         ))
     );
@@ -34,6 +42,11 @@ self.addEventListener("fetch", (event) => {
     }
 
     const requestUrl = new URL(event.request.url);
+
+    // Authentication callbacks carry a one-time code and must never enter the cache.
+    if (requestUrl.pathname.endsWith("/account-callback.html") || requestUrl.pathname.endsWith("/account/callback.mjs") || requestUrl.searchParams.has("code") || requestUrl.searchParams.has("state")) {
+        return;
+    }
 
     if (requestUrl.origin !== self.location.origin) {
         event.respondWith(fetch(event.request));

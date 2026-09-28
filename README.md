@@ -76,3 +76,42 @@ https://julianverse.de/weather/?place=Berlin&charts=temperature,rain,wind,uv&sav
 ```
 
 When used as an installed PWA, the app usually starts from the manifest `start_url` instead of the last visible URL. Last selected places, saved places, pinned places, settings, and cached weather are therefore persisted locally in browser storage.
+
+## Optional Julianverse Account sync
+
+Open **Julianverse Account · Cloud-Sync** in the sidebar. Sign in through the popup,
+allow the desired categories in Account, then explicitly choose **Upload local data**
+or **Use cloud data**. Signing in alone does not transfer weather app data.
+
+- Settings: language, theme, layout, units, activity, charts and visible modules.
+- Places: saved places, order and the pinned default place, including their coordinates.
+- The current device position, last viewed place, forecast cache, notification settings
+  and installation state remain local.
+
+Files live in `Julianverse/weather/` in ownCloud. Changes sync while the app is open;
+offline edits remain local until connectivity returns. Conflicts preserve both versions
+and require an explicit choice. Local backups can be downloaded before resolving them.
+Cloud imports update both localStorage and IndexedDB.
+
+Tokens stay in memory and rotate while the app is open. **Reloading requires signing in
+and selecting categories again.** Signing out or stopping sync preserves local data.
+The app and its cached interface remain usable without an account.
+
+The plain browser modules in `account/` come from
+[Julianverse Account](https://github.com/ZehJulianLp/julianverse-account/tree/main/integrations).
+For another host, register a public OIDC client with its exact HTTPS
+`account-callback.html` URL and update `account/config.mjs`. There is no client secret.
+The popup callback needs access to its opener. The service worker excludes auth callbacks
+and their codes from the cache; increment its cache version when changing cached modules.
+
+Integration checks run from the Account checkout using Python Playwright:
+
+```sh
+JULIANVERSE_WEATHER_CHECKOUT=/path/to/julianverse-weather \
+JULIANVERSE_STARTPAGE_CHECKOUT=/path/to/startpage \
+.venv/bin/pytest -q tests/test_static_apps.py
+```
+
+This uses local HTTPS test servers and in-memory cloud files. Check sign-in, explicit
+upload/download, offline edits, conflicts, sign-out and narrow/desktop layouts when
+changing the integration. No build step or browser runtime dependency is required.

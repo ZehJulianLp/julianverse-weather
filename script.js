@@ -713,6 +713,7 @@ function writeJson(key, value) {
     }
 
     writePersistentJson(key, value).catch(() => {});
+    window.dispatchEvent(new CustomEvent("julianverse:change", {detail: {key}}));
 }
 
 function removeJson(key) {
@@ -723,6 +724,7 @@ function removeJson(key) {
     }
 
     deletePersistentJson(key).catch(() => {});
+    window.dispatchEvent(new CustomEvent("julianverse:change", {detail: {key}}));
 }
 
 function openPersistentDatabase() {
@@ -2319,7 +2321,7 @@ async function initializeApp() {
         loadSearch(locationInput.value.trim() || "Berlin");
     }
 
-    restorePersistentStorage().then(() => {
+    await restorePersistentStorage().then(() => {
         const restoredPinnedLocation = readPinnedLocation();
         const restoredLastLocation = readLastLocation();
         const restoredStartupLocation = restoredPinnedLocation || restoredLastLocation;
@@ -2345,4 +2347,37 @@ initializeApp().catch(() => {
     registerServiceWorker();
     updateConnectionStatus();
     loadSearch(locationInput.value.trim() || "Berlin");
+}).finally(() => {
+    window.julianverseReady = true;
+    window.dispatchEvent(new Event("julianverse:ready"));
 });
+
+// Cloud imports update both local stores before refreshing the visible app.
+window.julianverseApply = async (resource) => {
+    const keys = resource === "settings" ? [settingsKey] : [savedLocationsKey, pinnedLocationKey];
+    const database = await openPersistentDatabaseWithTimeout();
+    if (database) {
+        await new Promise((resolve, reject) => {
+            const transaction = database.transaction(persistentStoreName, "readwrite");
+            const store = transaction.objectStore(persistentStoreName);
+            keys.forEach((key) => {
+                const raw = localStorage.getItem(key);
+                if (raw === null) store.delete(key);
+                else store.put(JSON.parse(raw), key);
+            });
+            transaction.oncomplete = resolve;
+            transaction.onerror = () => reject(transaction.error);
+            transaction.onabort = () => reject(transaction.error);
+        });
+    }
+    if (resource === "settings") {
+        currentSettings = readSettings();
+        applySettings();
+        updateUrlState();
+        if (currentLocation && currentWeatherData) renderWeather(currentLocation, currentWeatherData);
+    } else {
+        savedLocations = readSavedLocations();
+        currentPinnedLocation = readPinnedLocation();
+        renderSavedLocations();
+    }
+};

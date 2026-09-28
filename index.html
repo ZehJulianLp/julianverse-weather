@@ -11,6 +11,8 @@
     <link rel="apple-touch-icon" href="icons/icon-192.png">
     <link rel="stylesheet" href="styles.css">
     <script src="script.js" defer></script>
+    <link rel="stylesheet" href="account/panel.css">
+    <script type="module" src="account/app.mjs"></script>
 </head>
 <body>
     <a class="skip-link" href="#search-form" data-i18n="skipLink">Skip to weather search</a>
@@ -38,6 +40,11 @@
             <p class="empty-state" id="saved-empty" data-i18n="savedEmpty">No saved places yet.</p>
             <div class="saved-locations" id="saved-locations" aria-label="Saved places"></div>
         </section>
+
+        <details class="sidebar-section jv-account">
+            <summary>Julianverse Account · Cloud-Sync</summary>
+            <div id="julianverse-account"><p>Optional cloud sync. Your data stays local until you enable it.</p></div>
+        </details>
 
         <section class="sidebar-section" aria-labelledby="settings-title">
             <h3 id="settings-title" data-i18n="settingsTitle">Settings</h3>
