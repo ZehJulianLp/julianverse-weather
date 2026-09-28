@@ -95,6 +95,8 @@ Cloud imports update both localStorage and IndexedDB.
 
 Sign-in and enabled categories survive reloads and browser restarts on this device.
 A Secure/HttpOnly Account cookie renews short-lived access tokens held only in memory.
+Temporary connection failures show the remembered account and retry automatically.
+An API request rejected with an expired access token is renewed and retried once.
 The session lasts up to 30 days, unless revoked earlier. Signing out and turning sync
 off are remembered too, and preserve local data.
 The app and its cached interface remain usable without an account.
